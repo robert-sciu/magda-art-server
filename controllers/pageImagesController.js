@@ -1,15 +1,10 @@
 const pageImage = require("../models").sequelize.models.pageImage;
-const { uploadFile } = require("../utilities/multer");
+const { uploadFile } = require("../config/multer");
 const {
   uploadFileToS3,
   getErrorResponseWithStatusInfo,
   attachImagePaths,
 } = require("../utilities/utilities");
-
-async function setSectionName(req, res, next, sectionName) {
-  req.section = sectionName;
-  next();
-}
 
 async function getAllImages(req, res) {
   try {
@@ -30,7 +25,7 @@ async function getAllImages(req, res) {
 }
 
 async function updateSectionImage(req, res) {
-  const { imageName: name } = JSON.parse(req.body.JSON);
+  const { imageName: name, role } = JSON.parse(req.body.JSON);
 
   //////////////////////////////////////////////////////////
   // uploading file to s3 //////////////////////////////////
@@ -52,7 +47,7 @@ async function updateSectionImage(req, res) {
 
   const newContentImageData = {
     fileName: req.file.originalname,
-    section: req.section,
+    role,
     name,
   };
 
@@ -80,5 +75,4 @@ module.exports = {
   getAllImages,
   updateSectionImage,
   uploadFile,
-  setSectionName,
 };

@@ -1,4 +1,4 @@
-const { uploadFile } = require("../utilities/multer");
+const { uploadFile } = require("../config/multer");
 const {
   getErrorResponseWithStatusInfo,
   uploadFileToS3,

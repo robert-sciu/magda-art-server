@@ -1,5 +1,5 @@
 const sharp = require("sharp");
-const minioClient = require("./minio");
+const minioClient = require("../config/minio");
 const sizeOf = require("image-size");
 
 async function getImageDimmensions(bucketName, fileName) {

@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      section: {
+      role: {
         type: DataTypes.STRING,
         allowNull: false,
       },
