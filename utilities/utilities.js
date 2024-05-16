@@ -2,19 +2,10 @@ const sharp = require("sharp");
 const minioClient = require("../config/minio");
 const sizeOf = require("image-size");
 
-async function getImageDimmensions(bucketName, fileName) {
-  try {
-    const dataStream = await minioClient.getObject(bucketName, fileName);
-    const chunks = [];
-    for await (let chunk of dataStream) {
-      chunks.push(chunk);
-    }
-    const buffer = Buffer.concat(chunks);
-    const dimensions = sizeOf(buffer);
-    return dimensions; // { width, height }
-  } catch (error) {
-    throw new Error(error);
-  }
+function getImageDimmensions(file) {
+  const { width: width_px, height: height_px } = sizeOf(file.buffer);
+  const dimmensions = { width_px, height_px };
+  return dimmensions;
 }
 
 function getErrorResponseWithStatusInfo(error, StatusInfo) {
@@ -52,18 +43,11 @@ async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
 
 async function getPaintingDataObject(req, bucketName) {
   const file = req.file;
-  let dimmensions;
-  try {
-    const { width: width_px, height: height_px } = await getImageDimmensions(
-      bucketName,
-      file.originalname
-    );
-    dimmensions = { width_px, height_px };
-  } catch (error) {
-    throw new Error(error);
-  }
+
+  const dimmensions = getImageDimmensions(file);
   const json = JSON.parse(req.body.JSON);
   const fileName = file.originalname;
+
   return {
     ...dimmensions,
     ...json,

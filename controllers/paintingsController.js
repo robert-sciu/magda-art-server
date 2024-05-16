@@ -1,3 +1,4 @@
+const painting = require("../models").sequelize.models.painting;
 const { uploadFile } = require("../config/multer");
 const {
   getErrorResponseWithStatusInfo,
@@ -5,8 +6,6 @@ const {
   attachImagePaths,
   getPaintingDataObject,
 } = require("../utilities/utilities");
-
-const painting = require("../models").sequelize.models.painting;
 
 const fs = require("fs").promises;
 
@@ -50,10 +49,7 @@ async function postPainting(req, res) {
   ///////////////////////////////////////////////////////////
   let newPaintingData;
   try {
-    newPaintingData = await getPaintingDataObject(
-      req,
-      process.env.PAINTINGS_BUCKET_NAME
-    );
+    newPaintingData = await getPaintingDataObject(req);
   } catch (error) {
     res
       .status(400)

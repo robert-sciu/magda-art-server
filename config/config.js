@@ -3,10 +3,10 @@ module.exports = {
     postgres: {
       options: {
         port: 5432,
-        username: "postgres",
-        password: "postgres",
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
         dialect: "postgres",
-        database: "magda_art_db",
+        database: process.env.DB_NAME,
       },
     },
   },
