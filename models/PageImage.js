@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      placement: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       fileName: {
         type: DataTypes.STRING,
         allowNull: false,

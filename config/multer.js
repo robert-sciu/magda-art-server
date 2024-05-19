@@ -8,4 +8,4 @@ function uploadFile(req, res, next) {
   upload.single("file")(req, res, next);
 }
 
-module.exports = { upload, uploadFile };
+module.exports = { uploadFile };

@@ -10,10 +10,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       heading: {
         type: DataTypes.STRING,
-        unique: true,
+        unique: false,
       },
       content: {
         type: DataTypes.TEXT,
+      },
+      position: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
     },
     {

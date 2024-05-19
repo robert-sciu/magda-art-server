@@ -9,6 +9,7 @@ var indexRouter = require("./routes/index");
 const paintingsRouter = require("./routes/paintings");
 const contentsRouter = require("./routes/contents");
 const pageImagesRouter = require("./routes/pageImages");
+const emailsRouter = require("./routes/emails");
 var app = express();
 
 // view engine setup
@@ -26,6 +27,7 @@ app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
 app.use("/api/v1/pageImages", pageImagesRouter);
+app.use("/api/v1/mail", emailsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -25,7 +25,7 @@ async function getAllImages(req, res) {
 }
 
 async function updateSectionImage(req, res) {
-  const { imageName: name, role } = JSON.parse(req.body.JSON);
+  const { imageName: name, role, placement = null } = JSON.parse(req.body.JSON);
 
   //////////////////////////////////////////////////////////
   // uploading file to s3 //////////////////////////////////
@@ -48,6 +48,7 @@ async function updateSectionImage(req, res) {
   const newContentImageData = {
     fileName: req.file.originalname,
     role,
+    placement,
     name,
   };
 
