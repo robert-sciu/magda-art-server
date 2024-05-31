@@ -9,5 +9,7 @@ router
     pageImagesController.uploadFile,
     pageImagesController.updateSectionImage
   );
+router.route("/common").get(pageImagesController.getCommon);
+// .post(pageImagesController.uploadFile, pageImagesController.updateLogo);
 
 module.exports = router;

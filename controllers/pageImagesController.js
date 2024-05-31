@@ -1,4 +1,5 @@
 const pageImage = require("../models").sequelize.models.pageImage;
+const { Op } = require("sequelize");
 const { uploadFile } = require("../config/multer");
 const {
   uploadFileToS3,
@@ -21,6 +22,27 @@ async function getAllImages(req, res) {
     });
   } catch (error) {
     getErrorResponseWithStatusInfo(error, "Error fetching main page image(s)");
+  }
+}
+
+async function getCommon(req, res) {
+  try {
+    const commonImages = await pageImage.findAll({
+      where: { role: { [Op.in]: ["logo", "socials"] } },
+    });
+
+    const commonImagesDataJSON = commonImages.map((image) => image.toJSON());
+    await attachImagePaths(
+      commonImagesDataJSON,
+      process.env.CONTENT_IMAGES_BUCKET_NAME
+    );
+
+    res.json({
+      status: "success",
+      data: commonImagesDataJSON,
+    });
+  } catch (error) {
+    getErrorResponseWithStatusInfo(error, "Error fetching common images");
   }
 }
 
@@ -76,4 +98,5 @@ module.exports = {
   getAllImages,
   updateSectionImage,
   uploadFile,
+  getCommon,
 };

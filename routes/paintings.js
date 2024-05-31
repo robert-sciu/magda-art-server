@@ -10,6 +10,14 @@ router
   .get(paintingsController.getAllPaintings)
   .post(paintingsController.uploadFile, paintingsController.postPainting);
 
+router
+  .route("/fullRes")
+  .get(paintingsController.getFullResPainting)
+  .post(
+    paintingsController.uploadFile,
+    paintingsController.postFullResPainting
+  );
+
 router.route("/:id").delete(paintingsController.deletePaintingById);
 
 module.exports = router;

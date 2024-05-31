@@ -41,9 +41,8 @@ async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
   }
 }
 
-async function getPaintingDataObject(req, bucketName) {
+async function getPaintingDataObject(req) {
   const file = req.file;
-
   const dimmensions = getImageDimmensions(file);
   const json = JSON.parse(req.body.JSON);
   const fileName = file.originalname;
@@ -55,10 +54,22 @@ async function getPaintingDataObject(req, bucketName) {
   };
 }
 
+async function getFullResPaintingDataObject(req) {
+  const file = req.file;
+  const fileName = file.originalname;
+  const json = JSON.parse(req.body.JSON);
+
+  return {
+    ...json,
+    fileName,
+  };
+}
+
 module.exports = {
   getImageDimmensions,
   getErrorResponseWithStatusInfo,
   uploadFileToS3,
   attachImagePaths,
   getPaintingDataObject,
+  getFullResPaintingDataObject,
 };

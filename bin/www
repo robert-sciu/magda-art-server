@@ -39,6 +39,11 @@ async function initApp() {
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
+  Object.keys(db).forEach((modelName) => {
+    if (db[modelName].associate) {
+      db[modelName].associate(db);
+    }
+  });
   /**
    * Listen on provided port, on all network interfaces.
    */

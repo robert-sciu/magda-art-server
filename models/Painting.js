@@ -1,3 +1,5 @@
+const PaintingFullRes = require("./PaintingFullRes");
+
 module.exports = (sequelize, DataTypes) => {
   const Painting = sequelize.define(
     "painting",
@@ -34,16 +36,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      // path: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      //   unique: false,
-      // },
     },
     {
       createdAt: false,
       timestamps: false,
     }
   );
+  Painting.associate = (models) => {
+    Painting.hasOne(models.paintingFullRes, {
+      foreignKey: "imageId",
+      allowNull: false,
+    });
+  };
   return Painting;
 };

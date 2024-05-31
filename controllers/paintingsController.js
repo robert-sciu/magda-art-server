@@ -1,10 +1,12 @@
 const painting = require("../models").sequelize.models.painting;
+const paintingFullRes = require("../models").sequelize.models.paintingFullRes;
 const { uploadFile } = require("../config/multer");
 const {
   getErrorResponseWithStatusInfo,
   uploadFileToS3,
   attachImagePaths,
   getPaintingDataObject,
+  getFullResPaintingDataObject,
 } = require("../utilities/utilities");
 
 const fs = require("fs").promises;
@@ -29,10 +31,78 @@ async function getAllPaintings(req, res) {
   }
 }
 
+async function getFullResPainting(req, res) {
+  let fullResPainting;
+  try {
+    fullResPainting = await paintingFullRes.findOne({
+      where: { imageId: req.query.imageId },
+    });
+  } catch (error) {
+    res.json({ status: "error", message: error.message });
+  }
+
+  try {
+    const paintingJSON = [fullResPainting.toJSON()];
+    await attachImagePaths(
+      paintingJSON,
+      process.env.FULL_RES_PAINTINGS_BUCKET_NAME
+    );
+    res.json({ status: "success", data: paintingJSON });
+  } catch (error) {
+    res.json({ status: "error", message: error.message });
+  }
+}
+
+async function postFullResPainting(req, res) {
+  try {
+    await uploadFileToS3(req.file, process.env.FULL_RES_PAINTINGS_BUCKET_NAME);
+  } catch (error) {
+    res
+      .status(400)
+      .json(
+        getErrorResponseWithStatusInfo(error, "Error uploading image to s3")
+      );
+    return;
+  }
+
+  let fullResPaintingData;
+
+  try {
+    fullResPaintingData = await getFullResPaintingDataObject(req);
+  } catch (error) {
+    res
+      .status(400)
+      .json(
+        getErrorResponseWithStatusInfo(
+          error,
+          "Error creating image data object"
+        )
+      );
+  }
+  console.log(fullResPaintingData);
+  try {
+    const newFullResPainting = await paintingFullRes.create(
+      fullResPaintingData
+    );
+    res.json({
+      status: "success",
+      message: "full Resolution file uploaded successfully",
+      data: newFullResPainting.dataValues,
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .json(
+        getErrorResponseWithStatusInfo(error, "Error saving image data to db")
+      );
+  }
+}
+
 async function postPainting(req, res) {
   //////////////////////////////////////////////////////////
   // uploading file to s3 //////////////////////////////////
   //////////////////////////////////////////////////////////
+
   try {
     await uploadFileToS3(req.file, process.env.PAINTINGS_BUCKET_NAME);
   } catch (error) {
@@ -43,6 +113,7 @@ async function postPainting(req, res) {
       );
     return;
   }
+
   ///////////////////////////////////////////////////////////
   // completing image data for db storate which includes ////
   // accessing file on s3 and getting image dimmensions /////
@@ -120,4 +191,6 @@ module.exports = {
   getAllPaintings,
   postPainting,
   deletePaintingById,
+  getFullResPainting,
+  postFullResPainting,
 };
