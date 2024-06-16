@@ -79,7 +79,7 @@ async function postFullResPainting(req, res) {
         )
       );
   }
-  console.log(fullResPaintingData);
+
   try {
     const newFullResPainting = await paintingFullRes.create(
       fullResPaintingData

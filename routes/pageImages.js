@@ -8,7 +8,9 @@ router
   .post(
     pageImagesController.uploadFile,
     pageImagesController.updateSectionImage
-  );
+  )
+  .delete(pageImagesController.deleteSectionImage);
+
 router.route("/common").get(pageImagesController.getCommon);
 // .post(pageImagesController.uploadFile, pageImagesController.updateLogo);
 

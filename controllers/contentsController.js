@@ -11,10 +11,17 @@ async function getAllContent(req, res) {
 
 async function updateContent(req, res) {
   const json = req.body;
-
   try {
-    const contentData = await content.create(json);
-    res.json({ status: "success", data: contentData });
+    const [contentData, created] = await content.upsert(json, {
+      returning: true,
+    });
+    res.json({
+      status: "success",
+      message: created
+        ? "data created successfully"
+        : "data updated successfully",
+      data: contentData,
+    });
   } catch (error) {
     res.json({ status: "error", message: error.message });
   }

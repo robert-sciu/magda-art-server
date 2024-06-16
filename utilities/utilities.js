@@ -26,6 +26,14 @@ async function uploadFileToS3(file, bucketName) {
   }
 }
 
+async function deleteFileFromS3(file, bucketName) {
+  try {
+    await minioClient.removeObject(bucketName, file);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
   try {
     for (const imageData of paintingsDataArrayJSON) {
@@ -72,4 +80,5 @@ module.exports = {
   attachImagePaths,
   getPaintingDataObject,
   getFullResPaintingDataObject,
+  deleteFileFromS3,
 };

@@ -5,6 +5,7 @@ const {
   uploadFileToS3,
   getErrorResponseWithStatusInfo,
   attachImagePaths,
+  deleteFileFromS3,
 } = require("../utilities/utilities");
 
 async function getAllImages(req, res) {
@@ -94,9 +95,29 @@ async function updateSectionImage(req, res) {
   }
 }
 
+async function deleteSectionImage(req, res) {
+  const idToDel = req.query.id;
+  const imageData = await pageImage.findOne({ where: { id: idToDel } });
+  try {
+    await deleteFileFromS3(
+      imageData.fileName,
+      process.env.CONTENT_IMAGES_BUCKET_NAME
+    );
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  try {
+    await pageImage.destroy({ where: { id: idToDel } });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  res.status(200).json({ status: "success", message: "file deleted" });
+}
+
 module.exports = {
   getAllImages,
   updateSectionImage,
   uploadFile,
   getCommon,
+  deleteSectionImage,
 };

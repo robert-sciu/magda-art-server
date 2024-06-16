@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const paintingsController = require("../controllers/paintingsController");
+const { authenticateJWT } = require("../config/jwt");
 
 router.param("id", paintingsController.checkPaitningId);
 

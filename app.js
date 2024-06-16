@@ -10,6 +10,8 @@ const paintingsRouter = require("./routes/paintings");
 const contentsRouter = require("./routes/contents");
 const pageImagesRouter = require("./routes/pageImages");
 const emailsRouter = require("./routes/emails");
+const loginRouter = require("./routes/login");
+const userRouter = require("./routes/users");
 var app = express();
 
 // view engine setup
@@ -21,13 +23,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
 app.use("/api/v1/pageImages", pageImagesRouter);
 app.use("/api/v1/mail", emailsRouter);
+app.use("/api/v1/login", loginRouter);
+app.use("/api/v1/users", userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
