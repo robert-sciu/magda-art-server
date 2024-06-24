@@ -1,7 +1,7 @@
 const { transporter } = require("../config/nodemailer");
 
 async function sendEmail(req, res, next) {
-  const { name, email, subject, message } = req.query;
+  const { name, email, subject, message } = req.body;
   try {
     const info = await transporter.sendMail({
       from: `${name} <${email}>`, // sender address
@@ -12,7 +12,7 @@ async function sendEmail(req, res, next) {
     });
     res.json({ status: "success", data: `Message sent: ${info.messageId}` });
   } catch (error) {
-    console.error(error);
+    res.json({ status: "error", message: error.message });
   }
 }
 

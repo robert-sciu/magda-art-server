@@ -4,12 +4,14 @@ const { uploadFile } = require("../config/multer");
 const {
   getErrorResponseWithStatusInfo,
   uploadFileToS3,
+  deleteFileFromS3,
   attachImagePaths,
   getPaintingDataObject,
   getFullResPaintingDataObject,
 } = require("../utilities/utilities");
 
 const fs = require("fs").promises;
+const sharp = require("sharp");
 
 /*/////////////////////////////////////////
 // routes controllers for / route
@@ -35,7 +37,7 @@ async function getFullResPainting(req, res) {
   let fullResPainting;
   try {
     fullResPainting = await paintingFullRes.findOne({
-      where: { imageId: req.query.imageId },
+      where: { paintingId: req.query.paintingId },
     });
   } catch (error) {
     res.json({ status: "error", message: error.message });
@@ -53,22 +55,50 @@ async function getFullResPainting(req, res) {
   }
 }
 
-async function postFullResPainting(req, res) {
+async function postPainting(req, res) {
+  //   //////////////////////////////////////////////////////////
+  //   // creating compressed file //////////////////////////////
+  //   //////////////////////////////////////////////////////////
   try {
+    const compressedPaintingBuffer = await sharp(req.file.buffer)
+      .resize({ width: 960 })
+      // .webp({ quality: 80 })
+      .toBuffer();
+    // attaching compressed buffer to req
+    req.compressedFile = { ...req.file, buffer: compressedPaintingBuffer };
+  } catch (error) {
+    res
+      .status(400)
+      .json(getErrorResponseWithStatusInfo(error, "Error compressing image"));
+    return;
+  }
+
+  //   //////////////////////////////////////////////////////////
+  //   //////////// uploading files to s3 ///////////////////////
+  //   //////////////////////////////////////////////////////////
+
+  try {
+    await uploadFileToS3(req.compressedFile, process.env.PAINTINGS_BUCKET_NAME);
     await uploadFileToS3(req.file, process.env.FULL_RES_PAINTINGS_BUCKET_NAME);
   } catch (error) {
     res
       .status(400)
       .json(
-        getErrorResponseWithStatusInfo(error, "Error uploading image to s3")
+        getErrorResponseWithStatusInfo(error, "Error uploading images to s3")
       );
     return;
   }
 
-  let fullResPaintingData;
+  //   ///////////////////////////////////////////////////////////
+  //   // completing image data for db storate which includes ////
+  //   // accessing file on s3 and getting image dimmensions /////
+  //   ///////////////////////////////////////////////////////////
 
   try {
-    fullResPaintingData = await getFullResPaintingDataObject(req);
+    const newPaintingData = await getPaintingDataObject(req);
+    const fullResPaintingData = await getFullResPaintingDataObject(req);
+    req.newPaintingData = newPaintingData;
+    req.fullResPaintingData = fullResPaintingData;
   } catch (error) {
     res
       .status(400)
@@ -80,66 +110,25 @@ async function postFullResPainting(req, res) {
       );
   }
 
+  //   ///////////////////////////////////////////////////////////
+  //   // saving image data to db ////////////////////////////////
+  //   ///////////////////////////////////////////////////////////
+
   try {
+    const newPainting = await painting.create(req.newPaintingData);
+    req.fullResPaintingData.paintingId = newPainting.id;
+
     const newFullResPainting = await paintingFullRes.create(
-      fullResPaintingData
+      req.fullResPaintingData
     );
+
     res.json({
       status: "success",
       message: "full Resolution file uploaded successfully",
-      data: newFullResPainting.dataValues,
-    });
-  } catch (error) {
-    res
-      .status(400)
-      .json(
-        getErrorResponseWithStatusInfo(error, "Error saving image data to db")
-      );
-  }
-}
-
-async function postPainting(req, res) {
-  //////////////////////////////////////////////////////////
-  // uploading file to s3 //////////////////////////////////
-  //////////////////////////////////////////////////////////
-
-  try {
-    await uploadFileToS3(req.file, process.env.PAINTINGS_BUCKET_NAME);
-  } catch (error) {
-    res
-      .status(400)
-      .json(
-        getErrorResponseWithStatusInfo(error, "Error uploading image to s3")
-      );
-    return;
-  }
-
-  ///////////////////////////////////////////////////////////
-  // completing image data for db storate which includes ////
-  // accessing file on s3 and getting image dimmensions /////
-  ///////////////////////////////////////////////////////////
-  let newPaintingData;
-  try {
-    newPaintingData = await getPaintingDataObject(req);
-  } catch (error) {
-    res
-      .status(400)
-      .json(
-        getErrorResponseWithStatusInfo(
-          error,
-          "Error creating image data object"
-        )
-      );
-  }
-  ///////////////////////////////////////////////////////////
-  // saving image data to db ////////////////////////////////
-  ///////////////////////////////////////////////////////////
-  try {
-    const newPainting = await painting.create(newPaintingData);
-    res.json({
-      status: "success",
-      message: "file uploaded successfully",
-      data: newPainting.dataValues,
+      data: {
+        fullResPaintingData: newFullResPainting.dataValues,
+        compressedPaintingData: newPainting.dataValues,
+      },
     });
   } catch (error) {
     res
@@ -152,45 +141,41 @@ async function postPainting(req, res) {
       );
     return;
   }
-}
 
-/*/////////////////////////////////////////
-// routes controllers for /:id route
-//////////////////////////////////////// */
-
-async function checkPaitningId(req, res, next, id) {
   try {
-    const paintingData = await painting.findOne({ where: { id: id } });
-    req.paintingData = paintingData;
-    next();
   } catch (error) {
-    res.json({ status: "error", message: "invalid id: " + error.message });
+    res
+      .status(400)
+      .json(
+        getErrorResponseWithStatusInfo(error, "Error saving image data to db")
+      );
   }
 }
 
 async function deletePaintingById(req, res) {
+  const idToDel = req.query.id;
+  const imageData = await painting.findOne({ where: { id: idToDel } });
   try {
-    await fs.rm(req.paintingData.path, { force: true });
+    await deleteFileFromS3(
+      imageData.fileName,
+      process.env.PAINTINGS_BUCKET_NAME
+    );
   } catch (error) {
-    res.json({ status: "error", message: error.message });
-    return;
+    throw new Error(error.message);
   }
-
   try {
-    await painting.destroy({ where: { id: req.paintingData.id } });
+    await painting.destroy({ where: { id: idToDel } });
   } catch (error) {
-    res.json({ status: "error", message: error.message });
-    return;
+    throw new Error(error.message);
   }
-  res.json({ status: "success", message: "file deleted" });
+  res.status(200).json({ status: "success", message: "file deleted" });
 }
 
 module.exports = {
   uploadFile,
-  checkPaitningId,
+  // checkPaitningId,
   getAllPaintings,
   postPainting,
   deletePaintingById,
   getFullResPainting,
-  postFullResPainting,
 };

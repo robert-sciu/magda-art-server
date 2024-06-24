@@ -3,22 +3,16 @@ var router = express.Router();
 const paintingsController = require("../controllers/paintingsController");
 const { authenticateJWT } = require("../config/jwt");
 
-router.param("id", paintingsController.checkPaitningId);
-
-/* GET users listing. */
 router
   .route("/")
   .get(paintingsController.getAllPaintings)
-  .post(paintingsController.uploadFile, paintingsController.postPainting);
-
-router
-  .route("/fullRes")
-  .get(paintingsController.getFullResPainting)
   .post(
+    authenticateJWT,
     paintingsController.uploadFile,
-    paintingsController.postFullResPainting
-  );
+    paintingsController.postPainting
+  )
+  .delete(authenticateJWT, paintingsController.deletePaintingById);
 
-router.route("/:id").delete(paintingsController.deletePaintingById);
+router.route("/fullRes").get(paintingsController.getFullResPainting);
 
 module.exports = router;

@@ -15,12 +15,13 @@ function getErrorResponseWithStatusInfo(error, StatusInfo) {
 async function uploadFileToS3(file, bucketName) {
   try {
     const metadata = { "Content-Type": file.mimetype };
-    await minioClient.putObject(
+    const data = await minioClient.putObject(
       bucketName,
       file.originalname,
       file.buffer,
       metadata
     );
+    console.log(data);
   } catch (error) {
     throw new Error(error);
   }
@@ -50,7 +51,7 @@ async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
 }
 
 async function getPaintingDataObject(req) {
-  const file = req.file;
+  const file = req.compressedFile;
   const dimmensions = getImageDimmensions(file);
   const json = JSON.parse(req.body.JSON);
   const fileName = file.originalname;

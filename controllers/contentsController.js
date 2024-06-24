@@ -11,6 +11,7 @@ async function getAllContent(req, res) {
 
 async function updateContent(req, res) {
   const json = req.body;
+
   try {
     const [contentData, created] = await content.upsert(json, {
       returning: true,

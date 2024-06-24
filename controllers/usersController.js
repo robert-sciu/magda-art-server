@@ -1,10 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models").sequelize.models.user;
 
-async function getUser(req, res) {
-  res.json({ status: "ok" });
-}
-
 async function createUser(req, res) {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -22,4 +18,4 @@ async function createUser(req, res) {
   res.json({ status: "ok", message: "user created" });
 }
 
-module.exports = { getUser, createUser };
+module.exports = { createUser };

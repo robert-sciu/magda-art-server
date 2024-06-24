@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
 
   PaintingFullRes.associate = (models) => {
     PaintingFullRes.belongsTo(models.painting, {
-      foreignKey: "imageId",
+      foreignKey: "paintingId",
       allowNull: false,
     });
   };

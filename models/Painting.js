@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Painting.associate = (models) => {
     Painting.hasOne(models.paintingFullRes, {
-      foreignKey: "imageId",
+      foreignKey: "paintingId",
       allowNull: false,
     });
   };

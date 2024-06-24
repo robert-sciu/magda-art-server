@@ -5,8 +5,6 @@ const { authenticateJWT } = require("../config/jwt");
 
 router.route("/").post(loginController.login);
 
-router.route("/token").post(loginController.refreshToken);
-
-router.route("/logout").post(authenticateJWT, loginController.logout);
+router.route("/verifyToken").post(authenticateJWT, loginController.verifyToken);
 
 module.exports = router;
