@@ -10,4 +10,15 @@ module.exports = {
       },
     },
   },
+  production: {
+    postgres: {
+      options: {
+        port: 5432,
+        username: process.env.DB_USERNAME_PROD,
+        password: process.env.DB_PASSWORD_PROD,
+        dialect: "postgres",
+        database: process.env.DB_NAME_PROD,
+      },
+    },
+  },
 };
