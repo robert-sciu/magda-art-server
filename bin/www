@@ -38,6 +38,7 @@ async function initApp() {
     console.log("All models were synchronized successfully");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
+    process.exit(1);
   }
   Object.keys(db).forEach((modelName) => {
     if (db[modelName].associate) {
@@ -52,7 +53,7 @@ async function initApp() {
   server.on("listening", onListening);
 }
 
-initApp();
+// initApp();
 
 /**
  * Normalize a port into a number, string, or false.
@@ -109,3 +110,28 @@ function onListening() {
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
+
+function gracefulShutdown() {
+  console.log("Received kill signal, shutting down gracefully...");
+  server.close(() => {
+    console.log("Closed out remaining connections.");
+    db.sequelize.close().then(() => {
+      console.log("Database connection closed.");
+      process.exit(0);
+    });
+  });
+
+  // If after 10 seconds, shut down forcefully
+  setTimeout(() => {
+    console.error(
+      "Could not close connections in time, forcefully shutting down"
+    );
+    process.exit(1);
+  }, 10000);
+}
+
+// Listen for termination signals
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
+
+initApp();
