@@ -11,13 +11,10 @@ module.exports = {
     },
   },
   production: {
-    postgres: {
+    sqlite: {
       options: {
-        port: 5432,
-        username: process.env.DB_USERNAME_PROD,
-        password: process.env.DB_PASSWORD_PROD,
-        dialect: "postgres",
-        database: process.env.DB_NAME_PROD,
+        dialect: "sqlite",
+        storage: "./database.sqlite",
       },
     },
   },

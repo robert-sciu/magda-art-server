@@ -5,7 +5,8 @@ const basename = path.basename(__filename);
 const config = require("../config/config")[process.env.NODE_ENV];
 const db = {};
 
-const sequelize = new Sequelize(config.postgres.options);
+// const sequelize = new Sequelize(config.postgres.options);
+const sequelize = new Sequelize(config.sqlite.options);
 
 fs.readdirSync(__dirname)
   .filter((file) => {

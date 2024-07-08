@@ -35,3 +35,6 @@ out
 *.handlebarsc
 *.nunjucksc
 *.twigc
+
+# db files
+*.sqlite
