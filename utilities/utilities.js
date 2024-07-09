@@ -74,7 +74,7 @@ async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Key: `${bucketName}/${imageData.fileName}`, // Ensure the path includes the folder
-        // Expires: 24 * 60 * 60 // 24 hours
+        // Expires: 24 * 60 * 60, // 24 hours
       };
       imageData.url = s3.getSignedUrl("getObject", params);
     }
