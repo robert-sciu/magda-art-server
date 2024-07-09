@@ -1,6 +1,13 @@
 const sharp = require("sharp");
 const minioClient = require("../config/minio");
 const sizeOf = require("image-size");
+const AWS = require("aws-sdk");
+
+AWS.config.update({
+  region: "eu-central-1",
+});
+
+const s3 = new AWS.S3();
 
 function getImageDimmensions(file) {
   const { width: width_px, height: height_px } = sizeOf(file.buffer);
@@ -12,20 +19,31 @@ function getErrorResponseWithStatusInfo(error, StatusInfo) {
   return { status: StatusInfo, message: error.message, data: {} };
 }
 
-async function uploadFileToS3(file, bucketName) {
-  try {
-    const metadata = { "Content-Type": file.mimetype };
-    const data = await minioClient.putObject(
-      bucketName,
-      file.originalname,
-      file.buffer,
-      metadata
-    );
-    console.log(data);
-  } catch (error) {
-    throw new Error(error);
-  }
+function uploadFileToS3(file, bucketName) {
+  const fileContent = file.buffer;
+  const params = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: `${bucketName}/${file.originalname}`,
+    Body: fileContent,
+  };
+
+  return s3.upload(params).promise();
 }
+
+// async function uploadFileToS3(file, bucketName) {
+//   try {
+//     const metadata = { "Content-Type": file.mimetype };
+//     const data = await minioClient.putObject(
+//       bucketName,
+//       file.originalname,
+//       file.buffer,
+//       metadata
+//     );
+//     console.log(data);
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// }
 
 async function deleteFileFromS3(file, bucketName) {
   try {
