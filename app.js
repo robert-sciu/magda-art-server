@@ -30,7 +30,7 @@ app.use(
   })
 );
 
-app.use("/", indexRouter);
+// app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
 app.use("/api/v1/pageImages", pageImagesRouter);
