@@ -53,14 +53,30 @@ async function deleteFileFromS3(file, bucketName) {
   }
 }
 
+// async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
+//   try {
+//     for (const imageData of paintingsDataArrayJSON) {
+//       imageData.url = await minioClient.presignedGetObject(
+//         bucketName,
+//         imageData.fileName,
+//         24 * 60 * 60
+//       );
+//     }
+//     return paintingsDataArrayJSON;
+//   } catch (error) {
+//     throw new Error(error.message);
+//   }
+// }
+
 async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
   try {
     for (const imageData of paintingsDataArrayJSON) {
-      imageData.url = await minioClient.presignedGetObject(
-        bucketName,
-        imageData.fileName,
-        24 * 60 * 60
-      );
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: `${bucketName}/${imageData.fileName}`, // Ensure the path includes the folder
+        // Expires: 24 * 60 * 60 // 24 hours
+      };
+      imageData.url = s3.getSignedUrl("getObject", params);
     }
     return paintingsDataArrayJSON;
   } catch (error) {
