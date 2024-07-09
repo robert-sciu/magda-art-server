@@ -1,5 +1,5 @@
 const sharp = require("sharp");
-const minioClient = require("../config/minio");
+// const minioClient = require("../config/minio");
 const sizeOf = require("image-size");
 const AWS = require("aws-sdk");
 
@@ -45,13 +45,13 @@ function uploadFileToS3(file, bucketName) {
 //   }
 // }
 
-async function deleteFileFromS3(file, bucketName) {
-  try {
-    await minioClient.removeObject(bucketName, file);
-  } catch (error) {
-    throw new Error(error);
-  }
-}
+// async function deleteFileFromS3(file, bucketName) {
+//   try {
+//     await minioClient.removeObject(bucketName, file);
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// }
 
 // async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
 //   try {
@@ -115,5 +115,5 @@ module.exports = {
   attachImagePaths,
   getPaintingDataObject,
   getFullResPaintingDataObject,
-  deleteFileFromS3,
+  // deleteFileFromS3,
 };
