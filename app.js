@@ -39,12 +39,12 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    origin: process.env.ORIGIN,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: process.env.ORIGIN,
+//     credentials: true,
+//   })
+// );
 
 app.use((req, res, next) => {
   if (req.secure) {
