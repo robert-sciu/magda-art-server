@@ -24,20 +24,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// const allowedOrigins = [process.env.ORIGIN];
+const allowedOrigins = [process.env.ORIGIN];
 
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     optionsSuccessStatus: 200,
-//   })
-// );
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use(
   cors({
@@ -46,15 +46,15 @@ app.use(
   })
 );
 
-// app.use((req, res, next) => {
-//   if (req.secure) {
-//     return next();
-//   } else if (req.get("X-Forwarded-Proto") === "https") {
-//     return next();
-//   } else {
-//     res.redirect("https://" + req.hostname + req.url);
-//   }
-// });
+app.use((req, res, next) => {
+  if (req.secure) {
+    return next();
+  } else if (req.get("X-Forwarded-Proto") === "https") {
+    return next();
+  } else {
+    res.redirect("https://" + req.hostname + req.url);
+  }
+});
 
 // app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);
