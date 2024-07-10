@@ -26,36 +26,36 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const allowedOrigins = [process.env.ORIGIN];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    optionsSuccessStatus: 200,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
-
 // app.use(
 //   cors({
-//     origin: process.env.ORIGIN,
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     optionsSuccessStatus: 200,
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     allowedHeaders: ["Content-Type", "Authorization"],
 //     credentials: true,
 //   })
 // );
 
-app.use((req, res, next) => {
-  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
-    return next();
-  } else {
-    res.redirect("https://" + req.hostname + req.url);
-  }
-});
+app.use(
+  cors({
+    origin: process.env.ORIGIN,
+    credentials: true,
+  })
+);
+
+// app.use((req, res, next) => {
+//   if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+//     return next();
+//   } else {
+//     res.redirect("https://" + req.hostname + req.url);
+//   }
+// });
 
 app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);
