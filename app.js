@@ -38,7 +38,7 @@ app.use(
     // credentials: true,
     optionsSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -49,15 +49,13 @@ app.use(
 //   })
 // );
 
-// app.use((req, res, next) => {
-//   if (req.secure) {
-//     return next();
-//   } else if (req.get("X-Forwarded-Proto") === "https") {
-//     return next();
-//   } else {
-//     res.redirect("https://" + req.hostname + req.url);
-//   }
-// });
+app.use((req, res, next) => {
+  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+    return next();
+  } else {
+    res.redirect("https://" + req.hostname + req.url);
+  }
+});
 
 // app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);
