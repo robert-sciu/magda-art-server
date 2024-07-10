@@ -13,14 +13,12 @@ async function verifyToken(req, res) {
 async function login(req, res) {
   try {
     const user = await User.findOne({ where: { email: req.body.email } });
-    console.log(user);
     if (!user) {
       return res
         .status(400)
         .json({ status: "error", message: "User not found" });
     }
     const isMatch = await bcrypt.compare(req.body.password, user.password);
-    console.log(isMatch);
     if (!isMatch) {
       return res
         .status(401)
@@ -29,10 +27,8 @@ async function login(req, res) {
 
     // when passing in user object to jwt.sign only include non sensitive information
     const payload = { user: user.name, email: user.email, id: user.id };
-    console.log(payload);
     // serializing user object
     const accessToken = generateAccessToken(payload);
-    console.log("generated token");
 
     res.json({ token: accessToken });
   } catch (error) {
