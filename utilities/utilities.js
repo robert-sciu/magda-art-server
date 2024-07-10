@@ -45,13 +45,17 @@ function uploadFileToS3(file, bucketName) {
 //   }
 // }
 
-// async function deleteFileFromS3(file, bucketName) {
-//   try {
-//     await minioClient.removeObject(bucketName, file);
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// }
+async function deleteFileFromS3(file, bucketName) {
+  try {
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: `${bucketName}/${file}`,
+    };
+    await s3.deleteObject(params).promise();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 // async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
 //   try {
@@ -74,7 +78,7 @@ async function attachImagePaths(paintingsDataArrayJSON, bucketName) {
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Key: `${bucketName}/${imageData.fileName}`, // Ensure the path includes the folder
-        // Expires: 24 * 60 * 60, // 24 hours
+        Expires: 24 * 60 * 60, // 24 hours
       };
       imageData.url = s3.getSignedUrl("getObject", params);
     }
@@ -115,5 +119,5 @@ module.exports = {
   attachImagePaths,
   getPaintingDataObject,
   getFullResPaintingDataObject,
-  // deleteFileFromS3,
+  deleteFileFromS3,
 };
