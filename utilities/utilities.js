@@ -21,10 +21,13 @@ function getErrorResponseWithStatusInfo(error, StatusInfo) {
 
 function uploadFileToS3(file, bucketName) {
   const fileContent = file.buffer;
+  // console.log(file);
+  // console.log(file.originalname.split(".")[1] === "svg");
   const params = {
     Bucket: process.env.BUCKET_NAME,
     Key: `${bucketName}/${file.originalname}`,
     Body: fileContent,
+    ContentType: file.mimetype,
   };
 
   return s3.upload(params).promise();
