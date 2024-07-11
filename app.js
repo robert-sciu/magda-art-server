@@ -17,14 +17,14 @@ const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
 
-// const cspConfig = {
-//   directives: {
-//     defaultSrc: ["'self'"],
-//     scriptSrc: ["'self'", "https://www.google-analytics.com"],
-//   },
-// };
+const cspConfig = {
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "https://www.google-analytics.com"],
+  },
+};
 
-// app.use(helmet.contentSecurityPolicy(cspConfig));
+app.use(helmet.contentSecurityPolicy(cspConfig));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
