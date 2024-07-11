@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
+const helmet = require("helmet");
 
 var indexRouter = require("./routes/index");
 const paintingsRouter = require("./routes/paintings");
@@ -13,7 +14,24 @@ const emailsRouter = require("./routes/emails");
 const loginRouter = require("./routes/login");
 const userRouter = require("./routes/users");
 const { secureConnectionChecker } = require("./utilities/utilities");
+
 var app = express();
+
+const cspConfig = {
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    imgSrc: ["'self'", "data:"],
+    fontSrc: ["'self'"],
+    connectSrc: ["'self'"],
+    frameAncestors: ["'none'"],
+    baseUri: ["'self'"],
+    formAction: ["'self'"],
+  },
+};
+
+app.use(helmet.contentSecurityPolicy(cspConfig));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
