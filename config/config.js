@@ -1,12 +1,9 @@
 module.exports = {
   development: {
-    postgres: {
+    sqlite: {
       options: {
-        port: 5432,
-        username: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        dialect: "postgres",
-        database: process.env.DB_NAME,
+        dialect: "sqlite",
+        storage: "./database.sqlite",
       },
     },
   },
@@ -19,3 +16,15 @@ module.exports = {
     },
   },
 };
+
+// development: {
+//   postgres: {
+//     options: {
+//       port: 5432,
+//       username: process.env.DB_USERNAME,
+//       password: process.env.DB_PASSWORD,
+//       dialect: "postgres",
+//       database: process.env.DB_NAME,
+//     },
+//   },
+// },

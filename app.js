@@ -12,6 +12,7 @@ const pageImagesRouter = require("./routes/pageImages");
 const emailsRouter = require("./routes/emails");
 const loginRouter = require("./routes/login");
 const userRouter = require("./routes/users");
+const { secureConnectionChecker } = require("./utilities/utilities");
 var app = express();
 
 // view engine setup
@@ -42,20 +43,15 @@ app.use(
   })
 );
 
-// app.use(
-//   cors({
-//     origin: process.env.ORIGIN,
-//     credentials: true,
-//   })
-// );
+// app.use((req, res, next) => {
+//   if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+//     return next();
+//   } else {
+//     res.redirect("https://" + req.hostname + req.url);
+//   }
+// });
 
-app.use((req, res, next) => {
-  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
-    return next();
-  } else {
-    res.redirect("https://" + req.hostname + req.url);
-  }
-});
+secureConnectionChecker(app);
 
 // app.use("/", indexRouter);
 app.use("/api/v1/paintings", paintingsRouter);

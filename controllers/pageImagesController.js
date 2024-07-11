@@ -64,13 +64,14 @@ async function getCommon(req, res) {
 }
 
 async function updateSectionImage(req, res) {
+  console.log("try");
   const {
     imageName: name,
     role,
     placement = null,
     externalUrl = null,
   } = JSON.parse(req.body.JSON);
-
+  console.log(name);
   //////////////////////////////////////////////////////////
   // compressing file //////////////////////////////////////
   //////////////////////////////////////////////////////////
@@ -89,6 +90,7 @@ async function updateSectionImage(req, res) {
       return;
     }
   }
+  console.log("compressed");
 
   //////////////////////////////////////////////////////////
   // uploading file to s3 //////////////////////////////////
@@ -104,6 +106,8 @@ async function updateSectionImage(req, res) {
       );
     return;
   }
+
+  console.log("uploaded");
 
   ///////////////////////////////////////////////////////////
   // saving image data to db ////////////////////////////////
