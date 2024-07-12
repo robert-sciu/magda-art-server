@@ -31,7 +31,6 @@ const cspConfig = {
       (req, res) => `'nonce-${res.locals.nonce}'`,
       "'strict-dynamic'",
     ],
-    // Add other directives as needed
   },
 };
 
