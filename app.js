@@ -24,7 +24,7 @@ const cspConfig = {
   },
 };
 
-app.use(helmet.contentSecurityPolicy(cspConfig));
+app.use(helmet({ contentSecurityPolicy: cspConfig }));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
