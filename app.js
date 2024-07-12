@@ -32,15 +32,15 @@ const cspConfig = {
 };
 
 app.use(helmet());
-app.use(helmet.contentSecurityPolicy(cspConfig));
-app.use(helmet.hidePoweredBy());
-app.use(helmet.xssFilter());
-app.use(helmet.noSniff());
-app.use(helmet.frameguard({ action: "deny" }));
-app.use(helmet.permittedCrossDomainPolicies());
-app.use(
-  helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true })
-);
+// app.use(helmet.contentSecurityPolicy(cspConfig));
+// app.use(helmet.hidePoweredBy());
+// app.use(helmet.xssFilter());
+// app.use(helmet.noSniff());
+// app.use(helmet.frameguard({ action: "deny" }));
+// app.use(helmet.permittedCrossDomainPolicies());
+// app.use(
+//   helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true })
+// );
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
