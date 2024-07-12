@@ -21,10 +21,26 @@ const cspConfig = {
   directives: {
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "https://www.google-analytics.com"],
+    styleSrc: ["'self'", "'unsafe-inline'"], // Consider removing 'unsafe-inline' if possible
+    imgSrc: ["'self'", "data:"],
+    fontSrc: ["'self'"],
+    connectSrc: ["'self'"],
+    frameAncestors: ["'none'"],
+    baseUri: ["'self'"],
+    formAction: ["'self'"],
   },
 };
 
+app.use(helmet());
 app.use(helmet({ contentSecurityPolicy: cspConfig }));
+app.use(helmet.hidePoweredBy());
+app.use(helmet.xssFilter());
+app.use(helmet.noSniff());
+app.use(helmet.frameguard({ action: "deny" }));
+app.use(helmet.permittedCrossDomainPolicies());
+app.use(
+  helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
