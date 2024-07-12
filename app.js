@@ -23,19 +23,22 @@ app.use((req, res, next) => {
   next();
 });
 
-const cspConfig = {
-  useDefaults: true,
-  directives: {
-    scriptSrc: [
-      "'self'",
-      (req, res) => `'nonce-${res.locals.nonce}'`,
-      "'strict-dynamic'",
-    ],
-  },
-};
+// const cspConfig = {
+//   useDefaults: true,
+//   directives: {
+//     scriptSrc: [
+//       "'self'",
+//       (req, res) => `'nonce-${res.locals.nonce}'`,
+//       "'strict-dynamic'",
+//       "https:", // Allow scripts from HTTPS sources (like Google Analytics)
+//     ],
+//     objectSrc: ["'none'"],
+//     upgradeInsecureRequests: [],
+//   },
+// };
 
 app.use(helmet());
-app.use(helmet.contentSecurityPolicy(cspConfig));
+// app.use(helmet.contentSecurityPolicy(cspConfig));
 // app.use(helmet.hidePoweredBy());
 // app.use(helmet.xssFilter());
 // app.use(helmet.noSniff());
@@ -44,6 +47,31 @@ app.use(helmet.contentSecurityPolicy(cspConfig));
 // app.use(
 //   helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true })
 // );
+
+app.use((req, res, next) => {
+  const nonce = res.locals.nonce;
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", `'nonce-${nonce}'`, "'strict-dynamic'", "https:"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+      ],
+      fontSrc: [
+        "'self'",
+        "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+      ],
+      connectSrc: ["'self'", "https://magda-art.click"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+    },
+  })(req, res, next);
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -73,13 +101,13 @@ app.use(
   })
 );
 
-// app.use((req, res, next) => {
-//   if (req.secure || req.get("X-Forwarded-Proto") === "https") {
-//     return next();
-//   } else {
-//     res.redirect("https://" + req.hostname + req.url);
-//   }
-// });
+app.use((req, res, next) => {
+  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+    return next();
+  } else {
+    res.redirect("https://" + req.hostname + req.url);
+  }
+});
 
 secureConnectionChecker(app);
 
