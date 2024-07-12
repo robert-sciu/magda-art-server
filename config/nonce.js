@@ -21,6 +21,8 @@ function nonce(req, res, next) {
       formAction: ["'self'"],
     },
   })(req, res, next);
+
+  next();
 }
 
 module.exports = { nonce };
