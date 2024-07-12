@@ -1,5 +1,6 @@
 function nonce(req, res, next) {
   const nonce = res.locals.nonce;
+  console.log(nonce);
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
