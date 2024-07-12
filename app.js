@@ -23,53 +23,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// const cspConfig = {
-//   directives: {
-//     defaultSrc: ["'self'"],
-//     scriptSrc: ["'self'", `'nonce-${nonce}'`, "'strict-dynamic'", "https:"],
-//     styleSrc: ["'self'", "'unsafe-inline'"],
-//     imgSrc: [
-//       "'self'",
-//       "data:",
-//       "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-//     ],
-//     fontSrc: [
-//       "'self'",
-//       "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-//     ],
-//     connectSrc: ["'self'", "https://magda-art.click"],
-//     objectSrc: ["'none'"],
-//     frameAncestors: ["'none'"],
-//     baseUri: ["'self'"],
-//     formAction: ["'self'"],
-//   },
-// };
-
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'",
-        `'nonce-${res.locals.nonce}'`,
-        "'strict-dynamic'",
-        "https:",
-      ],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: [
-        "'self'",
-        "data:",
-        "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-      ],
-      fontSrc: [
-        "'self'",
-        "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-      ],
-      connectSrc: ["'self'", "https://magda-art.click"],
-      objectSrc: ["'none'"],
-      frameAncestors: ["'none'"],
-      baseUri: ["'self'"],
-      formAction: ["'self'"],
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          `'nonce-${res.locals.nonce}'`,
+          "'strict-dynamic'",
+          "https:",
+        ],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+        ],
+        fontSrc: [
+          "'self'",
+          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+        ],
+        connectSrc: ["'self'", "https://magda-art.click"],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+      },
     },
   })
 );
@@ -101,14 +81,6 @@ app.use(
     credentials: true,
   })
 );
-
-app.use((req, res, next) => {
-  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
-    return next();
-  } else {
-    res.redirect("https://" + req.hostname + req.url);
-  }
-});
 
 secureConnectionChecker(app);
 
