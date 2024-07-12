@@ -5,8 +5,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
+const crypto = require("crypto");
 
-var indexRouter = require("./routes/index");
+// var indexRouter = require("./routes/index");
 const paintingsRouter = require("./routes/paintings");
 const contentsRouter = require("./routes/contents");
 const pageImagesRouter = require("./routes/pageImages");
@@ -17,22 +18,25 @@ const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
 
-// const cspConfig = {
-//   directives: {
-//     defaultSrc: ["'self'"],
-//     scriptSrc: ["'self'", "https://www.google-analytics.com"],
-//     styleSrc: ["'self'", "'unsafe-inline'"], // Consider removing 'unsafe-inline' if possible
-//     imgSrc: ["'self'", "data:"],
-//     fontSrc: ["'self'"],
-//     connectSrc: ["'self'"],
-//     frameAncestors: ["'none'"],
-//     baseUri: ["'self'"],
-//     formAction: ["'self'"],
-//   },
-// };
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString("base64");
+  next();
+});
+
+const cspConfig = {
+  useDefaults: true,
+  directives: {
+    scriptSrc: [
+      "'self'",
+      (req, res) => `'nonce-${res.locals.nonce}'`,
+      "'strict-dynamic'",
+    ],
+    // Add other directives as needed
+  },
+};
 
 app.use(helmet());
-// app.use(helmet.contentSecurityPolicy(cspConfig));
+app.use(helmet.contentSecurityPolicy(cspConfig));
 // app.use(helmet.hidePoweredBy());
 // app.use(helmet.xssFilter());
 // app.use(helmet.noSniff());
@@ -80,7 +84,11 @@ app.use(
 
 secureConnectionChecker(app);
 
-// app.use("/", indexRouter);
+app.get("/nonce", (req, res) => {
+  const nonce = res.locals.nonce;
+  res.json({ nonce });
+});
+
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
 app.use("/api/v1/pageImages", pageImagesRouter);
