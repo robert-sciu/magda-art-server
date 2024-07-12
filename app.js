@@ -83,7 +83,7 @@ app.use(
 
 secureConnectionChecker(app);
 
-app.get("/nonce", (req, res) => {
+app.get("/api/v1/nonce", (req, res) => {
   const nonce = res.locals.nonce;
   res.json({ nonce });
 });
