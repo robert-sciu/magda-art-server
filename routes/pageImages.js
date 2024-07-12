@@ -2,11 +2,10 @@ const express = require("express");
 const router = express.Router();
 const pageImagesController = require("../controllers/pageImagesController");
 const { authenticateJWT } = require("../config/jwt");
-const { nonce } = require("../config/nonce");
 
 router
   .route("/")
-  .get(nonce, pageImagesController.getAllImages)
+  .get(pageImagesController.getAllImages)
   .post(
     authenticateJWT,
     pageImagesController.uploadFile,
