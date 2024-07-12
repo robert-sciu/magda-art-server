@@ -31,8 +31,8 @@ const cspConfig = {
   },
 };
 
-app.use(helmet());
-app.use(helmet.contentSecurityPolicy(cspConfig));
+// app.use(helmet());
+// app.use(helmet.contentSecurityPolicy(cspConfig));
 // app.use(helmet.hidePoweredBy());
 // app.use(helmet.xssFilter());
 // app.use(helmet.noSniff());
