@@ -17,19 +17,19 @@ const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
 
-const cspConfig = {
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "https://www.google-analytics.com"],
-    styleSrc: ["'self'", "'unsafe-inline'"], // Consider removing 'unsafe-inline' if possible
-    imgSrc: ["'self'", "data:"],
-    fontSrc: ["'self'"],
-    connectSrc: ["'self'"],
-    frameAncestors: ["'none'"],
-    baseUri: ["'self'"],
-    formAction: ["'self'"],
-  },
-};
+// const cspConfig = {
+//   directives: {
+//     defaultSrc: ["'self'"],
+//     scriptSrc: ["'self'", "https://www.google-analytics.com"],
+//     styleSrc: ["'self'", "'unsafe-inline'"], // Consider removing 'unsafe-inline' if possible
+//     imgSrc: ["'self'", "data:"],
+//     fontSrc: ["'self'"],
+//     connectSrc: ["'self'"],
+//     frameAncestors: ["'none'"],
+//     baseUri: ["'self'"],
+//     formAction: ["'self'"],
+//   },
+// };
 
 app.use(helmet());
 // app.use(helmet.contentSecurityPolicy(cspConfig));
