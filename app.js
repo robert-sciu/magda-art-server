@@ -18,41 +18,7 @@ const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
 
-app.use((req, res, next) => {
-  res.locals.nonce = crypto.randomBytes(16).toString("base64");
-  next();
-});
-
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          `'nonce-${res.locals.nonce}'`,
-          "'strict-dynamic'",
-          "https:",
-        ],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: [
-          "'self'",
-          "data:",
-          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-        ],
-        fontSrc: [
-          "'self'",
-          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-        ],
-        connectSrc: ["'self'", "https://magda-art.click"],
-        objectSrc: ["'none'"],
-        frameAncestors: ["'none'"],
-        baseUri: ["'self'"],
-        formAction: ["'self'"],
-      },
-    },
-  })
-);
+app.use(helmet());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -83,11 +49,6 @@ app.use(
 );
 
 secureConnectionChecker(app);
-
-app.get("/api/v1/nonce", (req, res) => {
-  const nonce = res.locals.nonce;
-  res.json({ nonce });
-});
 
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
