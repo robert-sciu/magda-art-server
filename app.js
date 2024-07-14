@@ -4,8 +4,6 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
-const helmet = require("helmet");
-const crypto = require("crypto");
 
 // var indexRouter = require("./routes/index");
 const paintingsRouter = require("./routes/paintings");
@@ -17,9 +15,6 @@ const userRouter = require("./routes/users");
 const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
-
-app.use(helmet());
-
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
