@@ -32,8 +32,8 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'report-sample' 'self'"],
-        styleSrc: ["'report-sample' 'self'"],
+        scriptSrc: ["'report-sample'", "'self'"],
+        styleSrc: ["'report-sample'", "'self'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         connectSrc: ["'self'", "https://magda-art.click"],
