@@ -36,7 +36,7 @@ app.use(
         styleSrc: ["'report-sample'", "'self'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
-        connectSrc: ["https://magda-art.click"],
+        connectSrc: ["https://www.magda-art.click"],
         fontSrc: ["'self'"],
         frameSrc: ["'self'"],
         imgSrc: [
