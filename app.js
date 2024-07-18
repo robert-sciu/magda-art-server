@@ -27,31 +27,31 @@ app.use((req, res, next) => {
 
 // app.use(helmet());
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'report-sample'", "'self'"],
-        styleSrc: ["'report-sample'", "'self'"],
-        objectSrc: ["'none'"],
-        baseUri: ["'self'"],
-        connectSrc: ["https://www.magda-art.click"],
-        fontSrc: ["'self'"],
-        frameSrc: ["'self'"],
-        imgSrc: [
-          "'self'",
-          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-        ],
-        manifestSrc: ["'self'"],
-        mediaSrc: ["'self'"],
-        workerSrc: ["'none'"],
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         scriptSrc: ["'report-sample'", "'self'"],
+//         styleSrc: ["'report-sample'", "'self'"],
+//         objectSrc: ["'none'"],
+//         baseUri: ["'self'"],
+//         connectSrc: ["https://www.magda-art.click"],
+//         fontSrc: ["'self'"],
+//         frameSrc: ["'self'"],
+//         imgSrc: [
+//           "'self'",
+//           "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+//         ],
+//         manifestSrc: ["'self'"],
+//         mediaSrc: ["'self'"],
+//         workerSrc: ["'none'"],
 
-        // Add other directives as needed
-      },
-    },
-  })
-);
+//         // Add other directives as needed
+//       },
+//     },
+//   })
+// );
 
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));
@@ -83,10 +83,10 @@ app.use(
 
 secureConnectionChecker(app);
 
-app.get("/api/v1/nonce", (req, res) => {
-  const nonce = res.locals.nonce;
-  res.json({ nonce });
-});
+// app.get("/api/v1/nonce", (req, res) => {
+//   const nonce = res.locals.nonce;
+//   res.json({ nonce });
+// });
 
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
