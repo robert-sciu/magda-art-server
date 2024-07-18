@@ -4,7 +4,6 @@ const User = require("../models").sequelize.models.user;
 module.exports = {
   createUser: {
     active: async (req, res) => {
-      console.log("asdfasd");
       try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         await User.create({

@@ -5,6 +5,8 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
+const crypto = require("crypto");
+const fs = require("fs");
 
 // var indexRouter = require("./routes/index");
 const paintingsRouter = require("./routes/paintings");
@@ -17,10 +19,42 @@ const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
 
-app.use(helmet());
+app.use((req, res, next) => {
+  const nonce = crypto.randomBytes(16).toString("hex");
+  res.locals.nonce = nonce;
+  next(); // pass control to the next handler)
+});
+
+// app.use(helmet());
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'report-sample' 'self'"],
+        styleSrc: ["'report-sample' 'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        connectSrc: ["'self' https://magda-art.click"],
+        fontSrc: ["'self'"],
+        frameSrc: ["'self'"],
+        imgSrc: [
+          "'self' https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+        ],
+        manifestSrc: ["'self'"],
+        mediaSrc: ["'self'"],
+        workerSrc: ["'self'"],
+
+        // Add other directives as needed
+      },
+    },
+  })
+);
+
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -47,6 +81,11 @@ app.use(
 );
 
 secureConnectionChecker(app);
+
+app.get("/api/v1/nonce", (req, res) => {
+  const nonce = res.locals.nonce;
+  res.json({ nonce });
+});
 
 app.use("/api/v1/paintings", paintingsRouter);
 app.use("/api/v1/contents", contentsRouter);
