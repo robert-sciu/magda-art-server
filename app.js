@@ -36,15 +36,15 @@ app.use(
         styleSrc: ["'report-sample' 'self'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
-        connectSrc: ["'self' https://magda-art.click"],
+        connectSrc: ["'self'", "https://magda-art.click"],
         fontSrc: ["'self'"],
         frameSrc: ["'self'"],
         imgSrc: [
-          "'self' https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
+          "'self'",
+          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
         ],
         manifestSrc: ["'self'"],
         mediaSrc: ["'self'"],
-
         workerSrc: ["'none'"],
 
         // Add other directives as needed
