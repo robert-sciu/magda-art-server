@@ -47,8 +47,6 @@ app.use(
         manifestSrc: ["'self'"],
         mediaSrc: ["'self'"],
         workerSrc: ["'none'"],
-
-        // Add other directives as needed
       },
     },
   })
