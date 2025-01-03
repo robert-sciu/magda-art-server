@@ -1,6 +1,6 @@
 module.exports = (sequelize, Datatypes) => {
   const User = sequelize.define(
-    "user",
+    "User",
     {
       id: {
         type: Datatypes.INTEGER,
@@ -8,7 +8,7 @@ module.exports = (sequelize, Datatypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
+      username: {
         type: Datatypes.STRING,
         allowNull: false,
         unique: true,
@@ -22,10 +22,10 @@ module.exports = (sequelize, Datatypes) => {
         type: Datatypes.STRING,
         allowNull: false,
       },
-      // refreshToken: {
-      //   type: Datatypes.STRING,
-      //   allowNull: true,
-      // },
+      refreshToken: {
+        type: Datatypes.STRING,
+        allowNull: true,
+      },
       isAdmin: {
         type: Datatypes.BOOLEAN,
         allowNull: false,

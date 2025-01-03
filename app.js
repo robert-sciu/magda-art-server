@@ -7,14 +7,15 @@ const cors = require("cors");
 const helmet = require("helmet");
 const crypto = require("crypto");
 const fs = require("fs");
+const router = require("./routes");
 
 // var indexRouter = require("./routes/index");
-const paintingsRouter = require("./routes/paintings");
-const contentsRouter = require("./routes/contents");
-const pageImagesRouter = require("./routes/pageImages");
-const emailsRouter = require("./routes/emails");
-const loginRouter = require("./routes/login");
-const userRouter = require("./routes/users");
+// const paintingsRouter = require("./routes/paintings");
+// const contentsRouter = require("./routes/contents");
+// const pageImagesRouter = require("./routes/pageImages");
+// const emailsRouter = require("./routes/emails");
+// const loginRouter = require("./routes/login");
+// const userRouter = require("./routes/users");
 const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
@@ -25,7 +26,7 @@ app.use((req, res, next) => {
   next(); // pass control to the next handler)
 });
 
-// app.use(helmet());
+app.use(helmet());
 
 app.use(
   helmet({
@@ -52,10 +53,6 @@ app.use(
   })
 );
 
-// view engine setup
-// app.set("views", path.join(__dirname, "views"));
-// app.set("view engine", "ejs");
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -75,7 +72,7 @@ app.use(
     },
     optionsSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
     credentials: true,
   })
 );
@@ -87,12 +84,14 @@ secureConnectionChecker(app);
 //   res.json({ nonce });
 // });
 
-app.use("/api/v1/paintings", paintingsRouter);
-app.use("/api/v1/contents", contentsRouter);
-app.use("/api/v1/pageImages", pageImagesRouter);
-app.use("/api/v1/mail", emailsRouter);
-app.use("/api/v1/login", loginRouter);
-app.use("/api/v1/users", userRouter);
+// app.use("/api/v1/paintings", paintingsRouter);
+// app.use("/api/v1/contents", contentsRouter);
+// app.use("/api/v1/pageImages", pageImagesRouter);
+// app.use("/api/v1/mail", emailsRouter);
+// app.use("/api/v1/login", loginRouter);
+// app.use("/api/v1/users", userRouter);
+
+router(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

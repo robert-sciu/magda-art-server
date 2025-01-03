@@ -1,18 +1,24 @@
 var express = require("express");
-var router = express.Router();
-const paintingsController = require("../controllers/paintingsController");
-const { authenticateJWT } = require("../config/jwt");
+const paintingsController = require("../controllers/paintings");
+const { attachFileToRequest } = require("../middleware/multerFileUpload");
+// router
+//   .route("/")
+//   .get(paintingsController.getAllPaintings)
+//   .post(
+//     authenticateJWT,
+//     paintingsController.uploadFile,
+//     paintingsController.postPainting
+//   )
+//   .delete(authenticateJWT, paintingsController.deletePaintingById);
 
-router
-  .route("/")
-  .get(paintingsController.getAllPaintings)
-  .post(
-    authenticateJWT,
-    paintingsController.uploadFile,
-    paintingsController.postPainting
-  )
-  .delete(authenticateJWT, paintingsController.deletePaintingById);
+// router.route("/fullRes").get(paintingsController.getFullResPainting);
 
-router.route("/fullRes").get(paintingsController.getFullResPainting);
+const paintingsRouterAdmin = () => {
+  const router = express.Router();
 
-module.exports = router;
+  router.route("/").post(attachFileToRequest, paintingsController.postPainting);
+
+  return router;
+};
+
+module.exports = { paintingsRouterAdmin };

@@ -7,6 +7,10 @@
     "dev": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.658.1",
+    "@aws-sdk/s3-request-presigner": "^3.670.0",
+    "winston": "^3.13.1",
+    "node-cache": "^5.1.2",
     "aws-sdk": "^2.1656.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.6",
@@ -14,7 +18,7 @@
     "debug": "~4.3.4",
     "dotenv": "^16.4.5",
     "ejs": "~3.1.9",
-    "express": "~4.19.2",
+    "express": "^4.21.2",
     "helmet": "^7.1.0",
     "http-errors": "~2.0.0",
     "image-size": "^1.1.1",

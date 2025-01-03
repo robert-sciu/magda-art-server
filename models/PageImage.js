@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const PageImage = sequelize.define(
-    "pageImage",
+    "PageImage",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,7 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      fileName: {
+      filename_desktop: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      filename_mobile: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      filename_lazy: {
         type: DataTypes.STRING,
         allowNull: false,
       },
