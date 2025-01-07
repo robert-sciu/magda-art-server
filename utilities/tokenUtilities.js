@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const config = require("../config/config");
 
 function generateJWT(user) {
   return jwt.sign(
@@ -9,7 +10,7 @@ function generateJWT(user) {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "15m",
+      expiresIn: config.common.tokensExpiration.JWTExpirationTime,
     }
   );
 }
@@ -23,7 +24,7 @@ function generateRefreshJWT(user) {
     },
     process.env.JWT_REFRESH_SECRET,
     {
-      expiresIn: "7d",
+      expiresIn: config.common.tokensExpiration.refreshJWTExpirationTime,
     }
   );
 }

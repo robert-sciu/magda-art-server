@@ -1,24 +1,21 @@
 var express = require("express");
 const paintingsController = require("../controllers/paintings");
 const { attachFileToRequest } = require("../middleware/multerFileUpload");
-// router
-//   .route("/")
-//   .get(paintingsController.getAllPaintings)
-//   .post(
-//     authenticateJWT,
-//     paintingsController.uploadFile,
-//     paintingsController.postPainting
-//   )
-//   .delete(authenticateJWT, paintingsController.deletePaintingById);
+const { attachIdParam } = require("../utilities/controllerUtilities");
 
-// router.route("/fullRes").get(paintingsController.getFullResPainting);
-
-const paintingsRouterAdmin = () => {
+const paintingsRouterOpen = () => {
   const router = express.Router();
-
-  router.route("/").post(attachFileToRequest, paintingsController.postPainting);
-
+  router.route("/").get(paintingsController.getPaintings);
   return router;
 };
 
-module.exports = { paintingsRouterAdmin };
+const paintingsRouterAdmin = () => {
+  const router = express.Router();
+  router.route("/").post(attachFileToRequest, paintingsController.postPainting);
+  router
+    .route("/:id")
+    .delete(attachIdParam, paintingsController.deletePainting);
+  return router;
+};
+
+module.exports = { paintingsRouterOpen, paintingsRouterAdmin };

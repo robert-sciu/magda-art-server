@@ -1,0 +1,19 @@
+const {
+  handleSuccessResponse,
+  handleErrorResponse,
+} = require("../../utilities/controllerUtilities");
+const logger = require("../../utilities/logger");
+const pageImagesService = require("./pageImagesService");
+
+async function getCommonPageImages(req, res) {
+  try {
+    const commonPageImages = await pageImagesService.getAllCommonPageImages();
+
+    return handleSuccessResponse(res, 200, commonPageImages);
+  } catch (error) {
+    logger.error(error);
+    return handleErrorResponse(res, 500, "something went wrong");
+  }
+}
+
+module.exports = getCommonPageImages;

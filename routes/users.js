@@ -9,10 +9,4 @@ const userRouterOpen = () => {
   return router;
 };
 
-// router
-//   .route("/")
-//   .post(userController.createUser[process.env.USER_CREATION_MODE]);
-
-// module.exports = router;
-
 module.exports = { userRouterOpen };

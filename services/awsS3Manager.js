@@ -8,7 +8,7 @@ const {
 } = require("@aws-sdk/client-s3");
 
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const logger = require("./logger");
+const logger = require("../utilities/logger");
 
 const s3Client = new S3Client({
   endpoint: "http://localhost:4569", // S3rver endpoint
@@ -24,9 +24,10 @@ function filePathFromFileObject(fileObject) {
 
 async function uploadFileToS3({
   fileObject,
+  filePath,
   bucketName = fileObject?.bucketName || process.env.BUCKET_NAME,
 }) {
-  const filePath = filePathFromFileObject(fileObject);
+  // const filePath = filePathFromFileObject(fileObject);
 
   try {
     const uploadParams = {
@@ -67,10 +68,10 @@ async function checkIfFileExists(bucketName, filePath) {
 }
 
 async function deleteFileFromS3({
-  fileObject,
-  bucketName = fileObject?.bucketName || process.env.BUCKET_NAME,
+  filePath,
+  bucketName = process.env.BUCKET_NAME,
 }) {
-  const filePath = filePathFromFileObject(fileObject);
+  // const filePath = filePathFromFileObject(fileObject);
   try {
     const params = {
       Bucket: bucketName,
@@ -88,28 +89,44 @@ async function deleteFileFromS3({
   }
 }
 
-async function attachImageURLs(pageImages, bucketName) {
-  const dataArray = pageImages.map((imageData) =>
+async function attachImageURLs({
+  imagesArray,
+  containingFolder,
+  bucketName = process.env.BUCKET_NAME,
+}) {
+  const dataArray = imagesArray.map((imageData) =>
     imageData.get({ plain: true })
   );
 
   try {
     const updatedArray = await Promise.all(
       dataArray.map(async (imageData) => {
-        imageData.url_desktop = await s3Client.getSignedUrl("getObject", {
+        const desktopPath = `${containingFolder}/${process.env.DESKTOP_IMG_FOLDER_NAME}/${imageData.filename_desktop}`;
+        const mobilePath = `${containingFolder}/${process.env.MOBILE_IMG_FOLDER_NAME}/${imageData.filename_mobile}`;
+        const lazyPath = `${containingFolder}/${process.env.LAZY_IMG_FOLDER_NAME}/${imageData.filename_lazy}`;
+
+        const commandDesktop = new GetObjectCommand({
           Bucket: bucketName,
-          Key: imageData.filename_desktop,
-          Expires: 24 * 60 * 60, // 1 day
+          Key: desktopPath,
         });
-        imageData.url_mobile = await s3Client.getSignedUrl("getObject", {
-          Bucket: bucketName,
-          Key: imageData?.filename_mobile,
-          Expires: 24 * 60 * 60,
+        imageData.url_desktop = await getSignedUrl(s3Client, commandDesktop, {
+          expiresIn: 24 * 60 * 60,
         });
-        imageData.url_lazy = await s3Client.getSignedUrl("getObject", {
+
+        const commandMobile = new GetObjectCommand({
           Bucket: bucketName,
-          Key: imageData?.filename_lazy,
-          Expires: 24 * 60 * 60,
+          Key: mobilePath,
+        });
+        imageData.url_mobile = await getSignedUrl(s3Client, commandMobile, {
+          expiresIn: 24 * 60 * 60,
+        });
+
+        const commandLazy = new GetObjectCommand({
+          Bucket: bucketName,
+          Key: lazyPath,
+        });
+        imageData.url_lazy = await getSignedUrl(s3Client, commandLazy, {
+          expiresIn: 24 * 60 * 60,
         });
         return imageData;
       })
@@ -201,7 +218,7 @@ async function bulkCheckIfFilesExist({
  * @returns {Promise<Array<{bucketName: string, path: string}>>}
  *   Array of uploaded files with their bucketName and path.
  */
-async function bulkUploadFiles(fileObjectsArray) {
+async function bulkUploadImages(fileObjectsArray) {
   const uploadedFiles = [];
   if (await bulkCheckIfFilesExist({ fileObjectsArray })) {
     throw new Error("Files already exist");
@@ -211,10 +228,11 @@ async function bulkUploadFiles(fileObjectsArray) {
       // console.log(fileObject);
       await uploadFileToS3({
         fileObject: fileObject,
+        filePath: filePathFromFileObject(fileObject),
       });
       uploadedFiles.push({
         bucketName: fileObject.bucketName,
-        path: `${fileObject.path}/${fileObject.file.originalname}`,
+        path: filePathFromFileObject(fileObject),
       });
     }
   } catch (error) {
@@ -237,6 +255,19 @@ async function bulkUploadFiles(fileObjectsArray) {
   }
 }
 
+async function bulkDeleteImages({ filePathsArray }) {
+  try {
+    await Promise.all(
+      filePathsArray.map(async (filePath) => {
+        await deleteFileFromS3({ filePath });
+      })
+    );
+  } catch (error) {
+    logger.error(error);
+    throw new Error(`Error deleting files`);
+  }
+}
+
 module.exports = {
   uploadFileToS3,
   checkIfFileExists,
@@ -244,6 +275,7 @@ module.exports = {
   attachImageURLs,
   deleteAllFilesFromS3,
   bulkCheckIfFilesExist,
-  bulkUploadFiles,
+  bulkUploadImages,
   getSignedUrlFromS3,
+  bulkDeleteImages,
 };

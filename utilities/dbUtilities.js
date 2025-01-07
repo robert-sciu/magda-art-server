@@ -8,6 +8,13 @@ async function findRecordByValue(model, value, transaction) {
   return await model.findOne({ where: { ...value } });
 }
 
+async function findAllRecords(model, query) {
+  if (query) {
+    return await model.findAll({ where: { ...query } });
+  }
+  return await model.findAll();
+}
+
 async function createRecord(model, data, transaction) {
   try {
     if (transaction) {
@@ -46,6 +53,7 @@ async function deleteRecord(model, id, transaction) {
 
 module.exports = {
   findRecordByValue,
+  findAllRecords,
   createRecord,
   updateRecord,
   deleteRecord,

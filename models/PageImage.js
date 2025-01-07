@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
+      imageName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -31,10 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      externalUrl: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
+      // externalUrl: {
+      //   type: DataTypes.STRING,
+      //   allowNull: true,
+      // },
     },
     {
       createdAt: false,

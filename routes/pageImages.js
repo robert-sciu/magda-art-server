@@ -1,18 +1,24 @@
 const express = require("express");
-const router = express.Router();
-const pageImagesController = require("../controllers/pageImagesController");
-const { authenticateJWT } = require("../config/jwt");
+const pageImagesController = require("../controllers/pageImages");
+const { attachFileToRequest } = require("../middleware/multerFileUpload");
+const { attachIdParam } = require("../utilities/controllerUtilities");
 
-router
-  .route("/")
-  .get(pageImagesController.getAllImages)
-  .post(
-    authenticateJWT,
-    pageImagesController.uploadFile,
-    pageImagesController.updateSectionImage
-  )
-  .delete(authenticateJWT, pageImagesController.deleteSectionImage);
+const pageImageRouterOpen = () => {
+  const router = express.Router();
+  router.route("/").get(pageImagesController.getPageImages);
+  router.route("/common").get(pageImagesController.getCommonPageImages);
+  return router;
+};
 
-router.route("/common").get(pageImagesController.getCommon);
+const pageImageRouterAdmin = () => {
+  const router = express.Router();
+  router
+    .route("/")
+    .post(attachFileToRequest, pageImagesController.postPageImage);
+  router
+    .route("/:id")
+    .delete(attachIdParam, pageImagesController.deletePageImage);
+  return router;
+};
 
-module.exports = router;
+module.exports = { pageImageRouterOpen, pageImageRouterAdmin };

@@ -9,6 +9,7 @@ const {
   verifyJWT,
 } = require("../../utilities/tokenUtilities");
 const { User } = require("../../models").sequelize.models;
+const config = require("../../config/config");
 
 class AuthenticationService {
   constructor() {}
@@ -49,7 +50,7 @@ class AuthenticationService {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: config.common.tokensExpiration.refreshJWTExpirationTimeNumber,
     });
   }
 

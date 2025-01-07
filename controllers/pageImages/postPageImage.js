@@ -1,19 +1,21 @@
 const {
-  handleSuccessResponse,
   handleErrorResponse,
+  handleSuccessResponse,
 } = require("../../utilities/controllerUtilities");
 const logger = require("../../utilities/logger");
-const paintingsService = require("./paintingsService");
+const paintingsService = require("../paintings/paintingsService");
+const pageImagesService = require("./pageImagesService");
 
-async function postPainting(req, res) {
-  const transaction = await paintingsService.getTransaction();
+async function postPageImage(req, res) {
+  const transaction = await pageImagesService.getTransaction();
 
   try {
     //   //////////////////////////////////////////////////////////
     //   // creating compressed file //////////////////////////////
     //   //////////////////////////////////////////////////////////
+
     [desktopImageData, mobileImageData, lazyImageData] =
-      await paintingsService.generateCompressedPaintingImageObjects(req);
+      await pageImagesService.generateCompressedPageImageObjects(req);
 
     //   //////////////////////////////////////////////////////////
     //   //////////// uploading files to s3 ///////////////////////
@@ -29,29 +31,24 @@ async function postPainting(req, res) {
     //   // saving image data to db ////////////////////////////////
     //   ///////////////////////////////////////////////////////////
 
-    const { width_px, height_px } = paintingsService.getImageDimmensions(
-      desktopImageData.file
-    );
-    const { title, description, width_cm, height_cm } = JSON.parse(
-      req.body.JSON
-    );
+    const { imageName, role, placement = null } = JSON.parse(req.body.JSON);
 
-    const paintingDbData = {
-      title,
-      description,
+    const pageImageDbData = {
+      imageName,
+      role,
+      placement,
       filename_desktop: desktopImageData.filename,
       filename_mobile: mobileImageData.filename,
       filename_lazy: lazyImageData.filename,
-      width_cm,
-      height_cm,
-      width_px,
-      height_px,
     };
 
-    await paintingsService.createPaintingDbEntry(paintingDbData, transaction);
+    await pageImagesService.createPageImageDbEntry(
+      pageImageDbData,
+      transaction
+    );
 
     await transaction.commit();
-    return handleSuccessResponse(res, 200, "file uploaded successfully");
+    return handleSuccessResponse(res, 200, "page image uploaded successfully");
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
@@ -59,4 +56,4 @@ async function postPainting(req, res) {
   }
 }
 
-module.exports = postPainting;
+module.exports = postPageImage;
