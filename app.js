@@ -9,13 +9,6 @@ const crypto = require("crypto");
 const fs = require("fs");
 const router = require("./routes");
 
-// var indexRouter = require("./routes/index");
-// const paintingsRouter = require("./routes/paintings");
-// const contentsRouter = require("./routes/contents");
-// const pageImagesRouter = require("./routes/pageImages");
-// const emailsRouter = require("./routes/emails");
-// const loginRouter = require("./routes/login");
-// const userRouter = require("./routes/users");
 const { secureConnectionChecker } = require("./utilities/utilities");
 
 var app = express();
@@ -84,19 +77,16 @@ secureConnectionChecker(app);
 //   res.json({ nonce });
 // });
 
-// app.use("/api/v1/paintings", paintingsRouter);
-// app.use("/api/v1/contents", contentsRouter);
-// app.use("/api/v1/pageImages", pageImagesRouter);
-// app.use("/api/v1/mail", emailsRouter);
-// app.use("/api/v1/login", loginRouter);
-// app.use("/api/v1/users", userRouter);
-
 router(app);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+app.use((req, res, next) => {
+  res.status(404).send("404: Page Not Found");
 });
+
+// catch 404 and forward to error handler
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
 app.use(function (err, req, res, next) {

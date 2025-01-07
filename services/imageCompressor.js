@@ -66,10 +66,10 @@ class ImageCompressor {
   }) {
     try {
       const availableResolutions = config.common.userSelectableImageResolutions;
-
-      if (!Object.keys(availableResolutions).includes(desktopSize)) {
+      if (!availableResolutions.includes(desktopSize)) {
         throw new Error("Invalid desktop size");
       }
+      console.log("lol");
 
       const compressionSizes = this.createImageSizesConfigObject(desktopSize);
 

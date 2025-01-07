@@ -1,5 +1,6 @@
 // var express = require("express");
 const authenticateJWT = require("../middleware/authenticationMiddleware");
+const sanitize = require("../middleware/sanitization");
 const { authRouterOpen, authRouterAdmin } = require("./authentication");
 const { contentRouterOpen, contentRouterAdmin } = require("./contents");
 const { pageImageRouterAdmin, pageImageRouterOpen } = require("./pageImages");
@@ -9,6 +10,7 @@ const { userRouterOpen } = require("./users");
 const apiBaseUrl = process.env.API_BASE_URL;
 
 const openRoutes = (app) => {
+  app.use(sanitize);
   app.use(`${apiBaseUrl}/auth`, authRouterOpen());
   app.use(`${apiBaseUrl}/users`, userRouterOpen());
   app.use(`${apiBaseUrl}/paintings`, paintingsRouterOpen());
@@ -17,6 +19,7 @@ const openRoutes = (app) => {
 };
 
 const adminRoutes = (app) => {
+  app.use(sanitize);
   app.use(authenticateJWT);
   app.use(`${apiBaseUrl}/admin/auth`, authRouterAdmin());
   app.use(`${apiBaseUrl}/admin/paintings`, paintingsRouterAdmin());
