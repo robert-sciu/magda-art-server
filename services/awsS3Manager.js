@@ -11,8 +11,12 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const logger = require("../utilities/logger");
 
 const s3Client = new S3Client({
-  endpoint: "http://127.0.0.1:4569", // S3rver endpoint
-  region: "us-east-1",
+  endpoint:
+    process.env.NODE_ENV === "production"
+      ? process.env.S3_ENDPOINT
+      : "http://127.0.0.1:4569", // S3rver endpoint
+  region:
+    process.env.NODE_ENV === "production" ? process.env.S3_REGION : "us-east-1",
   forcePathStyle: true,
   accessKeyId: "accessKey1", // Setting the access key ID
   secretAccessKey: "verySecretKey1", // Setting the secret access key
