@@ -30,6 +30,14 @@ module.exports = (sequelize, Datatypes) => {
         type: Datatypes.BOOLEAN,
         allowNull: false,
       },
+      passwordResetToken: {
+        type: Datatypes.STRING,
+        allowNull: true,
+      },
+      passwordResetExpires: {
+        type: Datatypes.DATE,
+        allowNull: true,
+      },
     },
     {
       timestamps: false,

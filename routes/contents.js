@@ -16,7 +16,7 @@ const contentRouterOpen = () => {
 
 const contentRouterAdmin = () => {
   const router = express.Router();
-  router.route("/").post(contentsController.updateContent);
+  router.route("/").post(contentsController.postContent);
   return router;
 };
 

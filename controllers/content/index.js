@@ -1,7 +1,7 @@
 const getContent = require("./getContent");
-const updateContent = require("./updateContent");
+const postContent = require("./postContent");
 
 module.exports = {
   getContent,
-  updateContent,
+  postContent,
 };

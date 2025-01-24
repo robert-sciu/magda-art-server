@@ -6,23 +6,6 @@ function getImageDimmensions(file) {
   return dimmensions;
 }
 
-function secureConnectionChecker(app) {
-  if (process.env.NODE_ENV === "production") {
-    app.use((req, res, next) => {
-      if (req.secure || req.get("X-Forwarded-Proto") === "https") {
-        return next();
-      } else {
-        res.redirect("https://" + req.hostname + req.url);
-      }
-    });
-  } else {
-    app.use((req, res, next) => {
-      next();
-    });
-  }
-}
-
 module.exports = {
   getImageDimmensions,
-  secureConnectionChecker,
 };

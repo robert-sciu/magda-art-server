@@ -26,6 +26,15 @@ async function createRecord(model, data, transaction) {
   }
 }
 
+/**
+ * Updates a single record in the given model.
+ *
+ * @param {Sequelize.Model} model
+ * @param {Object} updateData
+ * @param {number} id
+ * @param {Sequelize.Transaction} [transaction]
+ * @returns {Promise<number>} The number of rows updated.
+ */
 async function updateRecord(model, updateData, id, transaction) {
   if (transaction) {
     const [updatedRowsCount] = await model.update(updateData, {

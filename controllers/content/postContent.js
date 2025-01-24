@@ -4,7 +4,7 @@ const {
 } = require("../../utilities/controllerUtilities");
 const contentService = require("./contentService");
 
-async function updateContent(req, res) {
+async function postContent(req, res) {
   const json = req.body;
   try {
     await contentService.updateContent(json);
@@ -14,4 +14,4 @@ async function updateContent(req, res) {
   }
 }
 
-module.exports = updateContent;
+module.exports = postContent;

@@ -45,8 +45,26 @@ function attachIdParam(req, res, next) {
   next();
 }
 
+/**
+ * Destructures an object into a new object with only the specified keys.
+ *
+ * @param {Object} data - The object to be destructured.
+ * @param {Array<string>} keys - The keys to be included in the new object.
+ * @returns {Object} An object with only the specified keys.
+ */
+function destructureData(data, keys) {
+  const newData = keys.reduce((acc, key) => {
+    if (data[key] !== undefined) {
+      acc[key] = data[key];
+    }
+    return acc;
+  }, {});
+  return newData;
+}
+
 module.exports = {
   handleSuccessResponse,
   handleErrorResponse,
   attachIdParam,
+  destructureData,
 };

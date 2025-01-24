@@ -31,14 +31,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // externalUrl: {
-      //   type: DataTypes.STRING,
-      //   allowNull: true,
-      // },
+      external_url: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       createdAt: false,
       timestamps: false,
+      //this is indexing so that we can query by role a lot faster
+      indexes: [
+        {
+          name: "idx_role",
+          fields: ["role"],
+        },
+      ],
     }
   );
   return PageImage;

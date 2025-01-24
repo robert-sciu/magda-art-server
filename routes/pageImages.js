@@ -1,6 +1,9 @@
 const express = require("express");
 const pageImagesController = require("../controllers/pageImages");
-const { attachFileToRequest } = require("../middleware/multerFileUpload");
+const {
+  attachFileToRequest,
+  checkFileCompatibility,
+} = require("../middleware/multerFileUpload");
 const { attachIdParam } = require("../utilities/controllerUtilities");
 const {
   validatePostPageImage,
@@ -25,8 +28,10 @@ const pageImageRouterAdmin = () => {
       validate,
       pageImagesController.postPageImage
     );
+
   router
     .route("/:id")
+    .get(attachIdParam, pageImagesController.getPageImagesForSection)
     .delete(
       attachIdParam,
       validateDeletePageImage,

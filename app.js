@@ -3,79 +3,35 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const cors = require("cors");
-const helmet = require("helmet");
-const crypto = require("crypto");
-const fs = require("fs");
+
 const router = require("./routes");
 
-const { secureConnectionChecker } = require("./utilities/utilities");
+const {
+  useHelmet,
+  useCommonMiddleware,
+  useCors,
+  useSecureConnection,
+  useRateLimit,
+} = require("./middleware/commonMiddleware");
 
 var app = express();
 
-app.use((req, res, next) => {
-  const nonce = crypto.randomBytes(16).toString("hex");
-  res.locals.nonce = nonce;
-  next(); // pass control to the next handler)
-});
+useHelmet(app);
 
-app.use(helmet());
+useCommonMiddleware(app);
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'report-sample'", "'self'"],
-        styleSrc: ["'report-sample'", "'self'"],
-        objectSrc: ["'none'"],
-        baseUri: ["'self'"],
-        connectSrc: ["https://www.magda-art.click"],
-        fontSrc: ["'self'"],
-        frameSrc: ["'self'"],
-        imgSrc: [
-          "'self'",
-          "data:",
-          "https://robert-sciu-magda-art-bucket.s3.eu-central-1.amazonaws.com",
-        ],
-        manifestSrc: ["'self'"],
-        mediaSrc: ["'self'"],
-        workerSrc: ["'none'"],
-      },
-    },
-  })
-);
+useCors(app);
 
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+useSecureConnection(app);
 
-const allowedOrigins = [process.env.ORIGIN];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    optionsSuccessStatus: 200,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
-    credentials: true,
-  })
-);
-
-secureConnectionChecker(app);
-
-// app.get("/api/v1/nonce", (req, res) => {
-//   const nonce = res.locals.nonce;
-//   res.json({ nonce });
+useRateLimit(app);
+// app.use((req, res, next) => {
+//   const nonce = crypto.randomBytes(16).toString("hex");
+//   res.locals.nonce = nonce;
+//   next();
 // });
+
+app.use(express.static(path.join(__dirname, "public")));
 
 router(app);
 
@@ -83,10 +39,9 @@ app.use((req, res, next) => {
   res.status(404).send("404: Page Not Found");
 });
 
-// catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   next(createError(404));
-// });
+app.use(function (req, res, next) {
+  next(createError(404));
+});
 
 // error handler
 app.use(function (err, req, res, next) {

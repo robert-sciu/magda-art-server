@@ -6,9 +6,11 @@ const {
   findAllRecords,
   findRecordByValue,
   deleteRecord,
+  updateRecord,
 } = require("../../utilities/dbUtilities");
 const s3Manager = require("../../services/s3Manager");
 const { getImageDimmensions } = require("../../utilities/utilities");
+const { destructureData } = require("../../utilities/controllerUtilities");
 const paths = require("../../config/config").common.paths;
 const imageResolutionTypes = require("../../config/config").common
   .imageResolutionTypes;
@@ -54,8 +56,28 @@ class PaintingsService {
     return await s3Manager.bulkUploadImages(array);
   }
 
+  destructurePaintingDataForDb(dataJson) {
+    const data = JSON.parse(dataJson);
+    const keys = [
+      "title",
+      "description_en",
+      "description_de",
+      "description_es",
+      "description_pl",
+      "width_cm",
+      "height_cm",
+      "price_eur",
+      "is_available",
+    ];
+    return destructureData(data, keys);
+  }
+
   async createPaintingDbEntry(data, transaction) {
     return await createRecord(Painting, data, transaction);
+  }
+
+  async updatePaintingDbEntry(updateData, id, transaction) {
+    return await updateRecord(Painting, updateData, id, transaction);
   }
 
   getImageDimmensions(file) {

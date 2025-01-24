@@ -3,6 +3,7 @@ const authenticateJWT = require("../middleware/authenticationMiddleware");
 const sanitize = require("../middleware/sanitization");
 const { authRouterOpen, authRouterAdmin } = require("./authentication");
 const { contentRouterOpen, contentRouterAdmin } = require("./contents");
+const { mailerRouterOpen } = require("./emails");
 const { pageImageRouterAdmin, pageImageRouterOpen } = require("./pageImages");
 const { paintingsRouterAdmin, paintingsRouterOpen } = require("./paintings");
 const { userRouterOpen } = require("./users");
@@ -16,6 +17,7 @@ const openRoutes = (app) => {
   app.use(`${apiBaseUrl}/paintings`, paintingsRouterOpen());
   app.use(`${apiBaseUrl}/contents`, contentRouterOpen());
   app.use(`${apiBaseUrl}/pageImages`, pageImageRouterOpen());
+  app.use(`${apiBaseUrl}/mailer`, mailerRouterOpen());
 };
 
 const adminRoutes = (app) => {

@@ -5,6 +5,7 @@ const { attachIdParam } = require("../utilities/controllerUtilities");
 const {
   validatePostPainting,
   validateDeletePainting,
+  validateUpdatePainting,
 } = require("../validators/paintingValidators");
 const { validate } = require("../middleware/validator");
 
@@ -24,8 +25,15 @@ const paintingsRouterAdmin = () => {
       validate,
       paintingsController.postPainting
     );
+
   router
     .route("/:id")
+    .patch(
+      attachIdParam,
+      validateUpdatePainting,
+      validate,
+      paintingsController.updatePainting
+    )
     .delete(
       attachIdParam,
       validateDeletePainting,

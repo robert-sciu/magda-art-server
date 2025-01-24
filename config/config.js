@@ -20,10 +20,11 @@ module.exports = {
   common: {
     imageResolutions: {
       large: 1920,
-      medium: 960,
-      small: 600,
-      mobile: 500,
-      lazy: 100,
+      medium: 860,
+      small: 500,
+      mobile: 400,
+      mobileLarge: 900,
+      lazy: 70,
     },
     userSelectableImageResolutions: ["large", "medium", "small"],
 
@@ -33,6 +34,28 @@ module.exports = {
       JWTExpirationTime: "45m",
       refreshJWTExpirationTime: "7d",
       refreshJWTExpirationTimeNumber: 7 * 24 * 60 * 60 * 1000,
+    },
+
+    imageSections: [
+      "logo",
+      "socials",
+      "hero",
+      "welcome",
+      "bioParallax",
+      "bio",
+      "galleryParallax",
+      "visualizations",
+    ],
+
+    pageImagesQuantityLimits: {
+      logo: 1,
+      hero: 1,
+      socials: 5,
+      welcome: 4,
+      bioParallax: 1,
+      bio: 16,
+      visualizations: 3,
+      galleryParallax: 1,
     },
 
     paths: {

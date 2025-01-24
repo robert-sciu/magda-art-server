@@ -32,13 +32,24 @@ async function postPainting(req, res) {
     const { width_px, height_px } = paintingsService.getImageDimmensions(
       desktopImageData.file
     );
-    const { title, description, width_cm, height_cm } = JSON.parse(
-      req.body.JSON
-    );
+    const {
+      title,
+      description_en,
+      description_de,
+      description_es,
+      description_pl,
+      width_cm,
+      height_cm,
+      price_eur,
+      is_available,
+    } = paintingsService.destructurePaintingDataForDb(req.body.JSON);
 
     const paintingDbData = {
       title,
-      description,
+      description_en,
+      description_de,
+      description_es,
+      description_pl,
       filename_desktop: desktopImageData.filename,
       filename_mobile: mobileImageData.filename,
       filename_lazy: lazyImageData.filename,
@@ -46,6 +57,8 @@ async function postPainting(req, res) {
       height_cm,
       width_px,
       height_px,
+      price_eur,
+      is_available,
     };
 
     await paintingsService.createPaintingDbEntry(paintingDbData, transaction);
@@ -55,7 +68,7 @@ async function postPainting(req, res) {
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return handleErrorResponse(res, 500, "something went wrong");
+    return handleErrorResponse(res, 500, error.message);
   }
 }
 

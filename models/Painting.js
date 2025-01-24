@@ -13,8 +13,30 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: false,
       },
-      description: {
+      description_en: {
         type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+      description_de: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+      description_es: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+      description_pl: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+      price_eur: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+      },
+      is_available: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
       },
       filename_desktop: {
         type: DataTypes.STRING,

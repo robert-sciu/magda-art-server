@@ -5,9 +5,12 @@ const {
 const logger = require("../../utilities/logger");
 const paintingsService = require("../paintings/paintingsService");
 const pageImagesService = require("./pageImagesService");
+const config = require("../../config/config");
 
 async function postPageImage(req, res) {
   const transaction = await pageImagesService.getTransaction();
+  console.log(req.body);
+  // return handleSuccessResponse(res, 200, "image uploaded");
 
   try {
     //   //////////////////////////////////////////////////////////
@@ -31,15 +34,26 @@ async function postPageImage(req, res) {
     //   // saving image data to db ////////////////////////////////
     //   ///////////////////////////////////////////////////////////
 
-    const { imageName, role, placement = null } = JSON.parse(req.body.JSON);
+    const { imageName, role, externalUrl } = JSON.parse(req.body.JSON);
+
+    const imagesForRole = await pageImagesService.getPageImagesForSection(
+      role,
+      transaction
+    );
+    const imageLimitForRole = config.common.pageImagesQuantityLimits[role];
+
+    if (imagesForRole.length >= imageLimitForRole) {
+      await transaction.rollback();
+      return handleErrorResponse(res, 400, "role already has all the images");
+    }
 
     const pageImageDbData = {
       imageName,
       role,
-      placement,
       filename_desktop: desktopImageData.filename,
       filename_mobile: mobileImageData.filename,
       filename_lazy: lazyImageData.filename,
+      external_url: externalUrl || null,
     };
 
     await pageImagesService.createPageImageDbEntry(
@@ -52,7 +66,7 @@ async function postPageImage(req, res) {
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return handleErrorResponse(res, 500, "something went wrong");
+    return handleErrorResponse(res, 500, error.message);
   }
 }
 

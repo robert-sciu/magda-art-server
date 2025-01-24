@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-require("dotenv").config();
+
+require("dotenv").config({ path: __dirname + "/../../magda-art-env/.env" });
+console.log(__dirname + "/../../.env");
+
+const logger = require("../utilities/logger");
 /**
  * Module dependencies.
  */
@@ -29,22 +33,17 @@ var server = http.createServer(app);
 const db = require("../models");
 
 async function initApp() {
-  console.log("testing database connection");
+  logger.debug("testing database connection");
   try {
     await db.sequelize.authenticate();
-    console.log("Connection has been established successfully.");
+    logger.info("Connection has been established successfully.");
     // syncing db models
-    await db.sequelize.sync({ all: true });
-    console.log("All models were synchronized successfully");
+    await db.sequelize.sync();
+    logger.info("All models were synchronized successfully");
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
+    logger.error("Unable to connect to the database:", error);
     process.exit(1);
   }
-  Object.keys(db).forEach((modelName) => {
-    if (db[modelName].associate) {
-      db[modelName].associate(db);
-    }
-  });
   /**
    * Listen on provided port, on all network interfaces.
    */
@@ -87,11 +86,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case "EACCES":
-      console.error(bind + " requires elevated privileges");
+      logger.error(bind + " requires elevated privileges");
       process.exit(1);
       break;
     case "EADDRINUSE":
-      console.error(bind + " is already in use");
+      logger.error(bind + " is already in use");
       process.exit(1);
       break;
     default:
@@ -106,15 +105,17 @@ function onError(error) {
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  debug("Listening on " + bind);
+  if (process.env.NODE_ENV !== "production") {
+    logger.info("Listening on " + bind);
+  }
 }
 
 function gracefulShutdown() {
-  console.log("Received kill signal, shutting down gracefully...");
+  logger.info("Received kill signal, shutting down gracefully...");
   server.close(() => {
-    console.log("Closed out remaining connections.");
+    logger.info("Closed out remaining connections.");
     db.sequelize.close().then(() => {
-      console.log("Database connection closed.");
+      logger.info("Database connection closed.");
       process.exit(0);
     });
   });

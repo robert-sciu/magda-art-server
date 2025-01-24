@@ -21,6 +21,9 @@ function sanitize(req, res, next) {
   if (req.params) {
     sanitizeObject(req.params);
   }
+  if (req.body.JSON) {
+    sanitizeObject(JSON.parse(req.body.JSON));
+  }
   next();
 }
 

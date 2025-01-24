@@ -25,6 +25,7 @@ class PageImagesService {
     contactBig: "medium",
     contactSmall: "small",
     logo: "small",
+    socials: "small",
   };
 
   async getTransaction() {
@@ -32,13 +33,22 @@ class PageImagesService {
   }
 
   async getAllPageImages() {
-    const pageImages = await findAllRecords(PageImage);
+    const pageImages = await findAllRecords(PageImage, {
+      role: { [Op.notIn]: ["logo", "socials"] },
+    });
     return await this.attachImagePaths(pageImages);
   }
 
   async getAllCommonPageImages() {
     const pageImages = await findAllRecords(PageImage, {
       role: { [Op.in]: ["logo", "socials"] },
+    });
+    return await this.attachImagePaths(pageImages);
+  }
+
+  async getPageImagesForSection(section) {
+    const pageImages = await findAllRecords(PageImage, {
+      role: { [Op.in]: [section] },
     });
     return await this.attachImagePaths(pageImages);
   }

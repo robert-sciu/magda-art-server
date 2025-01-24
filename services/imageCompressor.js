@@ -33,7 +33,7 @@ class ImageCompressor {
         filePrefix: "desktop",
       },
       mobile: {
-        compressionType: "mobile",
+        compressionType: sizeOnPage === "large" ? "mobileLarge" : "mobile",
         sizeFolder: process.env.MOBILE_IMG_FOLDER_NAME,
         filePrefix: "mobile",
       },
@@ -69,9 +69,24 @@ class ImageCompressor {
       if (!availableResolutions.includes(desktopSize)) {
         throw new Error("Invalid desktop size");
       }
-      console.log("lol");
 
       const compressionSizes = this.createImageSizesConfigObject(desktopSize);
+
+      const fileIsSVG = file.mimetype === "image/svg+xml";
+
+      if (fileIsSVG) {
+        const objects = Object.values(compressionSizes).map((params) => {
+          return {
+            path: `${imgFolder}/${params.sizeFolder}`,
+            filename: `${params.filePrefix}-${filename
+              .split(" ")
+              .join("-")}.svg`,
+            file,
+          };
+        });
+
+        return objects;
+      }
 
       const objects = await Promise.all(
         Object.values(compressionSizes).map(async (params) => {
