@@ -18,8 +18,8 @@ const s3Client = new S3Client({
   region:
     process.env.NODE_ENV === "production" ? process.env.S3_REGION : "us-east-1",
   forcePathStyle: true,
-  accessKeyId: "accessKey1", // Setting the access key ID
-  secretAccessKey: "verySecretKey1", // Setting the secret access key
+  // accessKeyId: "accessKey1", // Setting the access key ID
+  // secretAccessKey: "verySecretKey1", // Setting the secret access key
 });
 
 function filePathFromFileObject(fileObject) {
