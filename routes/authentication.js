@@ -1,12 +1,6 @@
 const loginController = require("../controllers/authentication");
 const express = require("express");
 
-// router.route("/").post(loginController.login);
-
-// router.route("/verifyToken").post(authenticateJWT, loginController.verifyToken);
-
-// module.exports = router;
-
 const authRouterOpen = () => {
   const router = express.Router();
 

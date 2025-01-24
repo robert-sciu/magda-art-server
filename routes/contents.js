@@ -1,12 +1,5 @@
 const express = require("express");
-// const router = express.Router();
 const contentsController = require("../controllers/content");
-// const { authenticateJWT } = require("../config/jwt");
-
-// router
-//   .route("/")
-//   .get(contentsController.getAllContent)
-//   .post(authenticateJWT, contentsController.updateContent);
 
 const contentRouterOpen = () => {
   const router = express.Router();

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-require("dotenv").config({ path: __dirname + "/../../magda-art-env/.env" });
-console.log(__dirname + "/../../.env");
+require("dotenv").config();
 
 const logger = require("../utilities/logger");
 /**

@@ -54,7 +54,7 @@ function useCors(app) {
       ? [process.env.PRODUCTION_ORIGIN || "https://your-production-domain.com"]
       : [
           process.env.DEV_ORIGIN || "http://localhost:5173",
-          process.env.PREVIEW_ORIGIN || "http://localhost:4000",
+          process.env.PREVIEW_ORIGIN || "http://localhost:4173",
         ];
   app.use(
     cors({
