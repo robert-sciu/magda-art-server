@@ -9,7 +9,6 @@ const config = require("../../config/config");
 
 async function postPageImage(req, res) {
   const transaction = await pageImagesService.getTransaction();
-  console.log(req.body);
   // return handleSuccessResponse(res, 200, "image uploaded");
 
   try {

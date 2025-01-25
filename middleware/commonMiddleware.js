@@ -47,7 +47,7 @@ function useCommonMiddleware(app) {
 function useCors(app) {
   const allowedOrigins =
     process.env.NODE_ENV === "production"
-      ? [process.env.PRODUCTION_ORIGIN || "https://your-production-domain.com"]
+      ? [process.env.PRODUCTION_ORIGIN]
       : [
           process.env.DEV_ORIGIN || "http://localhost:5173",
           process.env.PREVIEW_ORIGIN || "http://localhost:4173",
@@ -78,7 +78,7 @@ function useCors(app) {
 function useSecureConnection(app) {
   if (process.env.NODE_ENV === "production") {
     app.use((req, res, next) => {
-      if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+      if (req.secure || req.get("X-Forwarded-Proto") === "http") {
         return next();
       } else {
         res.redirect("https://" + req.hostname + req.url);

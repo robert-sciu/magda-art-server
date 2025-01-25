@@ -26,11 +26,7 @@ function filePathFromFileObject(fileObject) {
   return `${fileObject.path}/${fileObject.filename}`;
 }
 
-async function uploadFileToS3({
-  fileObject,
-  filePath,
-  bucketName = fileObject?.bucketName || process.env.BUCKET_NAME,
-}) {
+async function uploadFileToS3({ fileObject, filePath, bucketName }) {
   // const filePath = filePathFromFileObject(fileObject);
 
   try {
@@ -48,7 +44,6 @@ async function uploadFileToS3({
     }
   } catch (error) {
     logger.error(error);
-    console.log(error.message);
     throw new Error(`Error uploading file: ${fileObject.filename}`);
   }
 }
@@ -71,10 +66,7 @@ async function checkIfFileExists(bucketName, filePath) {
   }
 }
 
-async function deleteFileFromS3({
-  filePath,
-  bucketName = process.env.BUCKET_NAME,
-}) {
+async function deleteFileFromS3({ filePath, bucketName }) {
   // const filePath = filePathFromFileObject(fileObject);
   try {
     const params = {
@@ -182,10 +174,7 @@ async function deleteAllFilesFromS3(bucketName, path) {
   }
 }
 
-async function bulkCheckIfFilesExist({
-  fileObjectsArray,
-  bucketName = fileObjectsArray[0]?.bucketName || process.env.BUCKET_NAME,
-}) {
+async function bulkCheckIfFilesExist({ fileObjectsArray, bucketName }) {
   try {
     for (const fileObject of fileObjectsArray) {
       const filePath = filePathFromFileObject(fileObject);
@@ -223,8 +212,9 @@ async function bulkCheckIfFilesExist({
  *   Array of uploaded files with their bucketName and path.
  */
 async function bulkUploadImages(fileObjectsArray) {
+  const bucketName = process.env.BUCKET_NAME;
   const uploadedFiles = [];
-  if (await bulkCheckIfFilesExist({ fileObjectsArray })) {
+  if (await bulkCheckIfFilesExist({ fileObjectsArray, bucketName })) {
     throw new Error("Files already exist");
   }
   try {
@@ -233,10 +223,11 @@ async function bulkUploadImages(fileObjectsArray) {
       await uploadFileToS3({
         fileObject: fileObject,
         filePath: filePathFromFileObject(fileObject),
+        bucketName,
       });
       uploadedFiles.push({
-        bucketName: fileObject.bucketName,
         path: filePathFromFileObject(fileObject),
+        bucketName,
       });
     }
   } catch (error) {
@@ -245,10 +236,10 @@ async function bulkUploadImages(fileObjectsArray) {
     await Promise.all(
       uploadedFiles.map(async (fileObject) => {
         try {
-          await deleteFileFromS3({ fileObject });
+          await deleteFileFromS3({ fileObject, bucketName });
         } catch (error) {
           logger.error(error);
-          console.error(`Failed to delete file during rollback: ${file.path}`);
+          logger.error(`Failed to delete file during rollback: ${file.path}`);
         }
       })
     );
@@ -260,10 +251,11 @@ async function bulkUploadImages(fileObjectsArray) {
 }
 
 async function bulkDeleteImages({ filePathsArray }) {
+  const bucketName = process.env.BUCKET_NAME;
   try {
     await Promise.all(
       filePathsArray.map(async (filePath) => {
-        await deleteFileFromS3({ filePath });
+        await deleteFileFromS3({ filePath, bucketName });
       })
     );
   } catch (error) {
