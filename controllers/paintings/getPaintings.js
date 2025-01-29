@@ -8,6 +8,7 @@ const paintingsService = require("./paintingsService");
 async function getPaintings(req, res) {
   try {
     const paintings = await paintingsService.getAllPaintings();
+
     return handleSuccessResponse(res, 200, paintings);
   } catch (error) {
     logger.error(error);

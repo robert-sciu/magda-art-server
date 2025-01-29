@@ -49,7 +49,11 @@ class AuthenticationService {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? process.env.SERVER_DOMAIN
+          : process.env.DEV_ORIGIN,
       maxAge: config.common.tokensExpiration.refreshJWTExpirationTimeNumber,
     });
   }
@@ -58,7 +62,7 @@ class AuthenticationService {
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
   }
 }

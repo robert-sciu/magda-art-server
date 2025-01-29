@@ -14,7 +14,7 @@ const s3Client = new S3Client({
   endpoint:
     process.env.NODE_ENV === "production"
       ? process.env.S3_ENDPOINT
-      : "http://127.0.0.1:4569", // S3rver endpoint
+      : `http://${process.env.WINDOWS_IP}:4569`, // S3rver endpoint
   region:
     process.env.NODE_ENV === "production" ? process.env.S3_REGION : "us-east-1",
   forcePathStyle: true,
