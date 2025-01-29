@@ -20,7 +20,6 @@ async function fileCompressor({ size, file }) {
       .resize({
         width: resolutions[size],
         fit: "inside",
-        withoutEnlargement: true,
       })
       .webp({ quality: 85 })
       .toBuffer();

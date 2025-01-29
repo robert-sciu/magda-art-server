@@ -51,6 +51,7 @@ function useCors(app) {
       : [
           process.env.DEV_ORIGIN || "http://localhost:5173",
           process.env.PREVIEW_ORIGIN || "http://localhost:4173",
+          process.env.STATIC_SERVER_ORIGIN,
         ];
   app.use(
     cors({
